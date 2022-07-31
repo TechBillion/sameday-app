@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "94338355958",
+    "project_id": "sameday-4786b",
+    "storage_bucket": "sameday-4786b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94338355958:android:67b04cd80292f76286d2d7",
+        "android_client_info": {
+          "package_name": "com.TechB.SameDay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "94338355958-7a2u5pnjuid6ibovjsla4ug2t2gfqk9d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbBzh77sqEzrn314UuhSQiQYhpZL0RuRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "94338355958-7a2u5pnjuid6ibovjsla4ug2t2gfqk9d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
