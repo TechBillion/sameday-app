@@ -1,16 +1,24 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:sameday/api_handlers/user_signup_api.dart';
+import 'package:sameday/screens/signup_screens/account_created.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../global_variables.dart';
 import '../../size_config.dart';
 import '../../widgets/remove_scroll_glow.dart';
 import '../../widgets/sameday_appbar.dart';
-import '../login_screens/loginscreen.dart';
+import 'package:http/http.dart' as http;
+
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -20,6 +28,8 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final _firestore = FirebaseFirestore.instance;
+
   /*
   * Account type 0 for none
   * 1 for personal
@@ -68,18 +78,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
-    username.dispose();
+    email.dispose();
     password.dispose();
+    confirmPassword.dispose();
+    phoneNumber.dispose();
+
     super.dispose();
   }
 
-  TextEditingController username = TextEditingController();
+  final _auth = FirebaseAuth.instance;
+
+  TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-  TextEditingController referralcode = TextEditingController();
-  final TextEditingController PhoneNumberController = TextEditingController();
+  final TextEditingController phoneNumber = TextEditingController();
+  final TextEditingController confirmPassword = TextEditingController();
 
   final FocusNode _usernameFocusNode = FocusNode();
-  final FocusNode _countryFocusNode = FocusNode();
   final GlobalKey<FormState> _validatorKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _confirmPassword = GlobalKey<FormState>();
 
@@ -96,8 +110,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Scaffold(
             backgroundColor: Color(0xffF9FBFF),
             appBar: SameDayAppBar(
-              wantOtherIcons: false,
               parentContext: context,
+              wantOtherIcons: false,
             ),
             resizeToAvoidBottomInset: true,
             body: ScrollConfiguration(
@@ -107,7 +121,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: ListView(
                     controller: _listController,
                     children: [
-
                       SizedBox(
                         height: 81 * SizeConfig.heightMultiplier!,
                       ),
@@ -117,32 +130,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               top: 12 * SizeConfig.heightMultiplier!),
                           child: RichText(
                               text: TextSpan(children: [
-
-                                TextSpan(
-                                  text: "Already have an Account? ",
-                                  style: TextStyle(
-                                      color: Color(0xff585858),
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: SizeConfig.textMultiplier! * 14),
-                                ),
-                                TextSpan(
-                                  text: "Signin",
-                                  style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      color: Color(0xff0398FF),
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: SizeConfig.textMultiplier! * 14),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      Navigator.pop(context);
-                                    },
-                                ),
-                              ])),
+                            TextSpan(
+                              text: "Already have an Account? ",
+                              style: TextStyle(
+                                  color: Color(0xff585858),
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: SizeConfig.textMultiplier! * 14),
+                            ),
+                            TextSpan(
+                              text: "Signin",
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  color: Color(0xff0398FF),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: SizeConfig.textMultiplier! * 14),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.pop(context);
+                                },
+                            ),
+                          ])),
                         ),
                       ),
                       SizedBox(
                         height: 20 * SizeConfig.heightMultiplier!,
                       ),
+
                       AutofillGroup(
                         child: Column(
                           children: [
@@ -153,10 +166,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               decoration:
                                   BoxDecoration(color: Color(0xffFFFFFF)),
                               height: 55 * SizeConfig.heightMultiplier!,
-                              margin: EdgeInsets.only(left: 30 * SizeConfig.widthMultiplier! , right: 30 * SizeConfig.widthMultiplier! ),
-
+                              margin: EdgeInsets.only(
+                                  left: 30 * SizeConfig.widthMultiplier!,
+                                  right: 30 * SizeConfig.widthMultiplier!),
                               child: TextFormField(
-                                controller: PhoneNumberController,
+                                controller: phoneNumber,
                                 cursorRadius: const Radius.circular(10.0),
                                 cursorColor: greenThemeColor,
                                 style: TextStyle(
@@ -207,7 +221,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   labelStyle:
                                       const TextStyle(color: Colors.black),
-                                  prefixText: "+91 ",
                                   prefixStyle: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
@@ -232,11 +245,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       * User Email input field
                       * */
                             Container(
-                                decoration: BoxDecoration(
-                                    color: Color(0xffFFFFFF)
-                                ),
-                                margin: EdgeInsets.only(left: 30 * SizeConfig.widthMultiplier! , right: 30 * SizeConfig.widthMultiplier! ),
-
+                                decoration:
+                                    BoxDecoration(color: Color(0xffFFFFFF)),
+                                margin: EdgeInsets.only(
+                                    left: 30 * SizeConfig.widthMultiplier!,
+                                    right: 30 * SizeConfig.widthMultiplier!),
                                 child: TextFormField(
                                     focusNode: _usernameFocusNode,
                                     textInputAction: TextInputAction.next,
@@ -246,6 +259,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     onFieldSubmitted: (value) =>
                                         _validatorKey.currentState?.validate(),
                                     //validating User Email
+
                                     validator: (String? value) {
                                       if (value == null) {
                                         return "Please enter the email";
@@ -257,7 +271,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         return "Please enter valid email";
                                       }
                                     },
-                                    controller: username,
+                                    onChanged: (value) {},
+                                    controller: email,
+                                    keyboardType: TextInputType.emailAddress,
                                     cursorRadius: const Radius.circular(10.0),
                                     cursorColor: greenThemeColor,
                                     style: TextStyle(
@@ -311,8 +327,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                   .withOpacity(0.3),
                                               width: 1.7),
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  6 * SizeConfig.widthMultiplier!)),
+                                              Radius.circular(6 *
+                                                  SizeConfig.widthMultiplier!)),
                                         ),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -321,33 +337,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         )))),
 
                             //if user email already exist in database
-                            (_emailExsists)
-                                ? Container(
-                                    width: ScreenWidth,
-                                    margin: EdgeInsets.fromLTRB(
-                                        ScreenWidth * 0.08,
-                                        ScreenHeight * 0.006,
-                                        ScreenWidth * 0.09,
-                                        0.0),
-                                    child: Text(
-                                        "This user email already exists, if you forget your password then reset it, a link will send to your email.",
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize:
-                                                SizeConfig.textMultiplier! *
-                                                    9.0),
-                                        textAlign: TextAlign.justify),
-                                  )
-                                : Container(),
+                            // (_emailExsists)
+                            //     ? Container(
+                            //         width: ScreenWidth,
+                            //         margin: EdgeInsets.fromLTRB(
+                            //             ScreenWidth * 0.08,
+                            //             ScreenHeight * 0.006,
+                            //             ScreenWidth * 0.09,
+                            //             0.0),
+                            //         child: Text(
+                            //             "This user email already exists, if you forget your password then reset it, a link will send to your email.",
+                            //             style: TextStyle(
+                            //                 color: Colors.red,
+                            //                 fontSize:
+                            //                     SizeConfig.textMultiplier! *
+                            //                         9.0),
+                            //             textAlign: TextAlign.justify),
+                            //       )
+                            //     : Container(),
                             SizedBox(
                               height: ScreenHeight * 0.01600,
                             ),
                             Container(
-                              decoration: BoxDecoration(
-                                  color: Color(0xffFFFFFF)
-                              ),
-                              margin: EdgeInsets.only(left: 30 * SizeConfig.widthMultiplier! , right: 30 * SizeConfig.widthMultiplier! ),
-
+                              decoration:
+                                  BoxDecoration(color: Color(0xffFFFFFF)),
+                              margin: EdgeInsets.only(
+                                  left: 30 * SizeConfig.widthMultiplier!,
+                                  right: 30 * SizeConfig.widthMultiplier!),
                               child: Focus(
                                 onFocusChange: (value) {
                                   if (value) {
@@ -446,8 +462,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 .withOpacity(0.3),
                                             width: 1.7),
                                         borderRadius: BorderRadius.all(
-                                            Radius.circular(
-                                                6 * SizeConfig.widthMultiplier!)),
+                                            Radius.circular(6 *
+                                                SizeConfig.widthMultiplier!)),
                                       ),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
@@ -534,12 +550,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     * */
 
                       Container(
-                        decoration: BoxDecoration(
-                          color: Color(0xffFFFFFF)
-                        ),
-                        margin: EdgeInsets.only(left: 30 * SizeConfig.widthMultiplier! , right: 30 * SizeConfig.widthMultiplier! ),
-
+                        decoration: BoxDecoration(color: Color(0xffFFFFFF)),
+                        margin: EdgeInsets.only(
+                            left: 30 * SizeConfig.widthMultiplier!,
+                            right: 30 * SizeConfig.widthMultiplier!),
                         child: TextFormField(
+                          controller: confirmPassword,
                           validator: (validator) {
                             if (validator != password.text) {
                               return "Password not matched";
@@ -599,9 +615,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               borderSide: BorderSide(
                                   color: greenThemeColor.withOpacity(0.3),
                                   width: 1.7),
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(
-                                      6 * SizeConfig.widthMultiplier!)),
+                              borderRadius: BorderRadius.all(Radius.circular(
+                                  6 * SizeConfig.widthMultiplier!)),
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
@@ -631,18 +646,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Container(
                         width: ScreenWidth,
                         height: ScreenHeight * 0.0678,
-                        margin: EdgeInsets.only(left: 30 * SizeConfig.widthMultiplier! , right: 30 * SizeConfig.widthMultiplier! ),
-
+                        margin: EdgeInsets.only(
+                            left: 30 * SizeConfig.widthMultiplier!,
+                            right: 30 * SizeConfig.widthMultiplier!),
                         child: ConstrainedBox(
                           constraints: BoxConstraints.tightFor(
                               width: ScreenWidth,
                               height: 48 * SizeConfig.heightMultiplier!),
                           child: Container(
                               decoration: BoxDecoration(
-
                                 boxShadow: [
                                   BoxShadow(
-                                      color: const Color(0xffFF7800).withOpacity(0.3), offset:const  Offset(0, 10), blurRadius:10 * SizeConfig.widthMultiplier!,spreadRadius: 0)
+                                      color: const Color(0xffFF7800)
+                                          .withOpacity(0.3),
+                                      offset: const Offset(0, 10),
+                                      blurRadius:
+                                          10 * SizeConfig.widthMultiplier!,
+                                      spreadRadius: 0)
                                 ],
                                 gradient: const LinearGradient(
                                   begin: Alignment.topCenter,
@@ -700,13 +720,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   Positioned.fill(
                                     child: Material(
                                       color: Colors.transparent,
-                                      child: InkWell(onTap: () {
+                                      child: InkWell(onTap: () async {
+                                        print("test");
                                         //when user clicks on the create account button
 
                                         //if user has not accepted the sameday policies
                                         if (_samedayPolicy) {
+                                          print("test");
                                           //if user has not filled any of the field
 
+                                          if (_validatorKey.currentState!
+                                                  .validate() &&
+                                              !userClickedOnSignupButton
+                                                  .value) {
+                                            setState(() {
+                                              userClickedOnSignupButton.value =
+                                                  true;
+                                            });
+
+                                            print("test");
+
+                                            createAccount(
+                                              phoneNumber.text,
+                                              email.text,
+                                              password.text,
+                                              confirmPassword.text,
+                                            );
+                                         sendOtp(phoneNumber.text);
+
+                                          }
                                         } else {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
@@ -933,63 +975,108 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // Future<void> createAccount(String username, String password,
-  //     String countryCode, String referralCode) async {
-  //   signUpAPI createNewUser = signUpAPI(
-  //       userName: username,
-  //       password: password,
-  //       country_code: countryCode,
-  //       referral_Code: referralCode);
-  //   int? checkSuccess;
-  //
-  //   //if user has not chosen account type
-  //   if (accountType == 0) {
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //       content: const Text("Please select account type"),
-  //       backgroundColor: Colors.black.withOpacity(0.6),
-  //       elevation: 0.0,
-  //     ));
-  //   }
-  //
-  //   //if user choose to create personal account
-  //   else {
-  //     if (accountType == 1) {
-  //       checkSuccess = await createNewUser.personalAccountSignUp();
+
+  Future<void> createAccount( String phoneNumber,String email, String password,
+      String confirmPassword) async {
+    signUpAPI createNewUser = signUpAPI(
+      phoneNumber: phoneNumber,
+      email: email,
+      password: password,
+      confirmPassword: confirmPassword,
+    );
+    int? checkSuccess;
+
+    checkSuccess = await createNewUser.accountSignUp();
+    if (checkSuccess == 1)  {
+      //if user account is created successfully
+      userClickedOnSignupButton.value = false;
+      sendOtp;
+      //saving username and password for future autofill
+      TextInput.finishAutofillContext();
+
+    }
+
+    //is email already exists in
+    else if (checkSuccess == 0) {
+      userClickedOnSignupButton.value = false;
+      setState(() {
+        _emailExsists = true;
+        errorMessage = "Email already Exits";
+      });
+    } else {
+      userClickedOnSignupButton.value = false;
+      setState(() {
+        _emailExsists = true;
+        errorMessage = "something went wrong";
+      });
+    }
+  }
+
+  void sendOtp(String otpPhoneNumber) async{
+
+    final response = await http.post(Uri.parse("http://apis.samedaylko.com/api/MobileOtpVerification/sendOtp"),
+      body:jsonEncode ({
+        "phoneNumber":otpPhoneNumber,
+      }),
+      headers:  {
+
+        HttpHeaders.contentTypeHeader : 'application/json',
+
+      },
+
+    );
+    print("helloo " + response.statusCode.toString());
+
+    if (response.statusCode == 200) {
+      //if account created successfully then return 1
+      //pushing to account created screen
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const AccountCreated()));
+    }
+  }
+  // signUp(String email, String password, String phoneNumber) async {
+  //   if (_validatorKey.currentState!.validate()&&!userClickedOnSignupButton.value) {
+  //     userClickedOnSignupButton.value = true;
+  //     try {
+  //       await FirebaseAuth.instance
+  //           .createUserWithEmailAndPassword(
+  //         email: email,
+  //         password: password,
+  //       ).then((signedInUser){
+  //         _firestore.collection('users').add({'email' : email,'password': password , 'phoneNumber': phoneNumber}).then((value) {
+  //           if(signedInUser != null){
+  //             Navigator.pushReplacement(
+  //                 context,
+  //                 MaterialPageRoute(
+  //                   builder: (_) => LogInScreen(),
+  //                 ));
+  //           }
+  //         });
+  //       } );
   //     }
-  //     //if user choose to create business account
-  //     else if (accountType == 2) {
-  //       checkSuccess = await createNewUser.BusinessAccountSignUp();
-  //     }
   //
-  //     //if user account is created successfully
-  //     if (checkSuccess == 1) {
-  //       userClickedOnSignupButton.value = false;
-  //       //saving username and password for future autofill
-  //       TextInput.finishAutofillContext();
-  //       //pushing to account created screen
-  //       Navigator.pushReplacement(context,
-  //           MaterialPageRoute(builder: (context) => const AccountCreated()));
-  //     }
-  //     //is email already exists in
-  //     else if (checkSuccess == 0) {
-  //       userClickedOnSignupButton.value = false;
-  //       setState(() {
+  //     on FirebaseAuthException catch (e) {
+  //      if (e.code == 'email-already-in-use') {
+  //         ScaffoldMessenger.of(context)
+  //             .showSnackBar(SnackBar(
+  //           content: const Text(
+  //               "The account already exists for that email."),
+  //           backgroundColor:
+  //           Colors.redAccent.withOpacity(0.6),
+  //           elevation: 0.0,
+  //         )
+  //         );
   //
-  //         _emailExsists = true;
-  //         errorMessage =
-  //         "This user email already exists, if you forget your password then reset it, a link will send to your email.";
-  //       });
-  //     } else {
-  //       userClickedOnSignupButton.value = false;
-  //       setState(() {
-  //         _emailExsists = true;
-  //         errorMessage =
-  //         "Something went wrong please check your internet connection and try again";
-  //       });
+  //
+  //       }
+  //
+  //
+  //     } catch (e) {
+  //       print(e);
   //     }
+  //     userClickedOnSignupButton.value = false;
   //   }
   // }
-
   void _checkPasswordStrength(String value) {
     if (value.isNotEmpty) {
       ++_passwordStrength;

@@ -63,6 +63,7 @@
     <string name="common_open_on_phone">ტელეფონში გახსნა</string>
     <string name="common_signin_button_text">შესვლა</string>
     <string name="common_signin_button_text_long">Google-ით შესვლა</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"გაცვლის ბუფერში კოპირებული ბმული"</string>
     <string msgid="8038256446254964252" name="default_error_message">"შენატანი არასწორია"</string>
     <string name="error_icon_content_description">შეცდომა</string>
     <string name="exo_controls_cc_disabled_description">სუბტიტრების ჩართვა</string>
@@ -118,6 +119,9 @@
     <string name="exo_track_surround_7_point_1">7.1 მოცულობითი ხმა</string>
     <string name="exo_track_unknown">უცნობი</string>
     <string name="exposed_dropdown_menu_content_description">ჩამოსაშლელი მენიუს ჩვენება</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"ბმულის კოპირება"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"ბრაუზერში გახსნა"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"ბმულის გაზიარება"</string>
     <string name="icon_content_description">დიალოგის ხატულა</string>
     <string msgid="6827826412747255547" name="in_progress">"მუშავდება"</string>
     <string msgid="2486394087603402002" name="indeterminate">"არც მონიშნულია და არც მოუნიშნავი"</string>

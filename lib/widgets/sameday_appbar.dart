@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../global_variables.dart';
+import '../screens/login_screens/loginscreen.dart';
 import '../size_config.dart';
 
 class SameDayAppBar extends StatefulWidget with PreferredSizeWidget {
@@ -126,7 +128,7 @@ class _SameDayAppBarState extends State<SameDayAppBar> {
             )
                 : Padding(
               padding: EdgeInsets.only(
-                  right: ScreenWidth * 0.0373,
+                  right: ScreenWidth * .0373,
                   bottom: 10.0),
               child: GestureDetector(
                   child: Container(
@@ -144,7 +146,7 @@ class _SameDayAppBarState extends State<SameDayAppBar> {
               padding: EdgeInsets.only(
                   right: ScreenWidth * 0.103,
 
-                  bottom: 10.0),
+                  bottom: 10.0 * SizeConfig.heightMultiplier!),
               child: GestureDetector(
                   child: Theme(
                     data: ThemeData(
@@ -153,6 +155,7 @@ class _SameDayAppBarState extends State<SameDayAppBar> {
                     child: PopupMenuTheme(
                       data: const PopupMenuThemeData(elevation: 20.0),
                       child: PopupMenuButton<int>(
+
                           shape: RoundedRectangleBorder(
                               side: BorderSide(
                                   width: 1, color: Color(0xffEEEEEE)),
@@ -187,7 +190,7 @@ class _SameDayAppBarState extends State<SameDayAppBar> {
                                       SizedBox(
                                         width: ScreenWidth * 0.02,
                                       ),
-                                      Text("Loyalty Levels",
+                                      Text("Services",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w400,
                                               fontSize: 16 *
@@ -268,6 +271,16 @@ class _SameDayAppBarState extends State<SameDayAppBar> {
                               ),
                               PopupMenuItem<int>(
                                   onTap: () {
+                                    FirebaseAuth.instance.signOut().then((value) {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => LogInScreen(),
+                                          ));
+
+
+                                    });
+
                                     // //log out user and delete its data
                                     // _loginHandler.logOutUser();
                                     // Future.delayed(
@@ -305,29 +318,11 @@ class _SameDayAppBarState extends State<SameDayAppBar> {
                                   )),
                             ];
                           },
-                          child: Container(
-                            height: 28 * SizeConfig.heightMultiplier!,
-                            width: 28 * SizeConfig.widthMultiplier!,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color:
-                                      Color(0xff416FF4).withOpacity(0.15),
-                                      spreadRadius: 2,
-                                      blurRadius: 7,
-                                      offset: Offset(0,
-                                          3 * SizeConfig.heightMultiplier!))
-                                ]),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                'images/account.svg',
-                                height: 16 * SizeConfig.heightMultiplier!,
-                                width: 16 * SizeConfig.widthMultiplier!,
-                                color: Color(0xff2540C5),
-                              ),
-                            ),
+                          child: SvgPicture.asset(
+                            'images/popup_icon.svg',
+                            height: 31 * SizeConfig.heightMultiplier!,
+                            width: 31 * SizeConfig.widthMultiplier!,
+
                           )),
                     ),
                   )),

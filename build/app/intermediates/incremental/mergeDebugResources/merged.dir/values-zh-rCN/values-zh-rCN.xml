@@ -63,6 +63,7 @@
     <string name="common_open_on_phone">在手机上打开</string>
     <string name="common_signin_button_text">登录</string>
     <string name="common_signin_button_text_long">使用 Google 帐号登录</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"链接已复制到剪贴板"</string>
     <string msgid="8038256446254964252" name="default_error_message">"输入无效"</string>
     <string name="error_icon_content_description">错误</string>
     <string name="exo_controls_cc_disabled_description">启用字幕</string>
@@ -118,6 +119,9 @@
     <string name="exo_track_surround_7_point_1">7.1 环绕声</string>
     <string name="exo_track_unknown">未知</string>
     <string name="exposed_dropdown_menu_content_description">显示下拉菜单</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"复制链接"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"在浏览器中打开"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"分享链接"</string>
     <string name="icon_content_description">对话框图标</string>
     <string msgid="6827826412747255547" name="in_progress">"进行中"</string>
     <string msgid="2486394087603402002" name="indeterminate">"既没有勾选也没有取消选中"</string>

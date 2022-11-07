@@ -142,6 +142,7 @@
     <string name="common_open_on_phone">Otevřít v telefonu</string>
     <string name="common_signin_button_text">Přihlásit se</string>
     <string name="common_signin_button_text_long">Přihlásit se k účtu Google</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Odkaz zkopírován do schránky"</string>
     <string msgid="8038256446254964252" name="default_error_message">"Neplatný údaj"</string>
     <string name="error_icon_content_description">Chyba</string>
     <string name="exo_controls_cc_disabled_description">Zapnout titulky</string>
@@ -197,6 +198,9 @@
     <string name="exo_track_surround_7_point_1">Prostorový zvuk 7.1</string>
     <string name="exo_track_unknown">Neznámé</string>
     <string name="exposed_dropdown_menu_content_description">Zobrazit rozbalovací nabídku</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Kopírovat odkaz"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Otevřít v prohlížeči"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Sdílet odkaz"</string>
     <string name="icon_content_description">Ikona dialogového okna</string>
     <string name="idenfy_additional_support_view_button_title">ZPĚT</string>
     <string name="idenfy_additional_support_view_description">Ověření nebylo provedeno. Pokud máte jakékoli dotazy, obraťte se na náš tým zákaznické podpory.</string>

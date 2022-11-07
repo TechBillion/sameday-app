@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,7 +15,10 @@ import '../size_config.dart';
 import 'session_expired_screen/noconnection.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+
+
+
+  const SplashScreen({Key? key, }) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -22,6 +26,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
 
   late StreamSubscription _sub;
 
@@ -68,10 +73,13 @@ class _SplashScreenState extends State<SplashScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               // stops: [0.0,0.2],
-                              colors: [Color(0xffDBF3FA), Color(0xffDBF3FA)],
+                              colors: [Color(0xff7AD7F0
+                              ), Color(0xffDBF3FA
+                              )],
                               tileMode: TileMode.clamp)),
                     ),
                     Column(children: [
+
                       Transform.scale(
                         scale: 1.2,
                         child: Container(
@@ -96,11 +104,11 @@ class _SplashScreenState extends State<SplashScreen> {
                       child: Container(
                           height: ScreenWidth * 0.504,
                           width: ScreenWidth * 0.504,
-                          margin: EdgeInsets.only(left: ScreenWidth * 0.12),
+                          margin: EdgeInsets.only(top: 40 * SizeConfig.heightMultiplier!),
                           child: Transform.rotate(
-                              angle: 15.0,
+                              angle: 1,
                               child: Image.asset(
-                                "assets/polygon.png",
+                                "assets/polygon_.png",
                                 fit: BoxFit.contain,
                               ))),
                     ),
@@ -110,11 +118,11 @@ class _SplashScreenState extends State<SplashScreen> {
                       child: Container(
                           height: ScreenWidth * 0.504,
                           width: ScreenWidth * 0.504,
-                          margin: EdgeInsets.only(left: ScreenWidth * 0.5),
+                          margin: EdgeInsets.only(left: 140 * SizeConfig.widthMultiplier!,top: 50* SizeConfig.heightMultiplier!),
                           child: Transform.rotate(
-                              angle: 15.0,
+                              angle: 1,
                               child: Image.asset(
-                                "assets/polygon.png",
+                                "assets/polygon_.png",
                                 fit: BoxFit.contain,
                               ))),
                     ),
@@ -122,11 +130,11 @@ class _SplashScreenState extends State<SplashScreen> {
                         height: ScreenWidth * 0.504,
                         width: ScreenWidth * 0.504,
                         margin: EdgeInsets.only(
-                            top: ScreenHeight * 0.15, left: ScreenWidth * 0.47),
+                            top: ScreenHeight * 0.22, left: 150* SizeConfig.widthMultiplier!),
                         child: Transform.rotate(
-                            angle: 15.0,
+                            angle: 1,
                             child: Image.asset(
-                              "assets/polygon.png",
+                              "assets/polygon_.png",
                               fit: BoxFit.contain,
                             ))),
                   ],

@@ -63,6 +63,7 @@
     <string name="common_open_on_phone">දුරකථනය තුළ විවෘත කරන්න</string>
     <string name="common_signin_button_text">පුරන්න</string>
     <string name="common_signin_button_text_long">Google සමගින් පුරන්න</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"සබැඳිය පසුරු පුවරුවට පිටපත් කෙරිණි"</string>
     <string msgid="8038256446254964252" name="default_error_message">"වලංගු නොවන ආදානයකි"</string>
     <string name="error_icon_content_description">දෝෂය</string>
     <string name="exo_controls_cc_disabled_description">උපසිරැසි සබල කරන්න</string>
@@ -118,6 +119,9 @@
     <string name="exo_track_surround_7_point_1">7.1 අවට ශබ්දය</string>
     <string name="exo_track_unknown">නොදනී</string>
     <string name="exposed_dropdown_menu_content_description">පතන මෙනුව පෙන්වන්න</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"සබැඳිය පිටපත් කරන්න"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"බ්‍රව්සරයේ විවෘත කරන්න"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"සබැඳිය බෙදා ගන්න"</string>
     <string name="icon_content_description">සංවාද නිරූපකය</string>
     <string msgid="6827826412747255547" name="in_progress">"ප්‍රගතියේ පවතී"</string>
     <string msgid="2486394087603402002" name="indeterminate">"හරි ලකුණු යොදා හෝ හරි ලකුණු යෙදීම ඉවත් කර නැත"</string>
