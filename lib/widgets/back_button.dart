@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sameday/size_config.dart';
 
 import '../global_variables.dart';
 
@@ -52,3 +53,13 @@ class CustomBackButton extends StatelessWidget {
     );
   }
 }
+
+class LoaderImage extends StatelessWidget {
+  const LoaderImage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Image.asset('images/loader_with_animation.gif',width: 80*SizeConfig.widthMultiplier!,));
+  }
+}
+

@@ -20,8 +20,12 @@ String? appVerison;
 ///user referal code
 RxString userReferalCode = ''.obs;
 
+
+
 Color blueThemeColor = const Color(0xff1840a4);
 //TODO change this to production APi
+
+String parentApi = 'http://apis.samedaylko.com/api';
 
 
 const greenThemeColor = Color(0xff2BD67B);

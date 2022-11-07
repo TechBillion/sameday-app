@@ -136,6 +136,7 @@
     <string name="common_open_on_phone">Öppna på mobilen</string>
     <string name="common_signin_button_text">Logga in</string>
     <string name="common_signin_button_text_long">Logga in med Google</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Länk kopierad till Urklipp"</string>
     <string msgid="8038256446254964252" name="default_error_message">"Ogiltiga indata"</string>
     <string name="error_icon_content_description">Fel</string>
     <string name="exo_controls_cc_disabled_description">Aktivera undertexter</string>
@@ -191,6 +192,9 @@
     <string name="exo_track_surround_7_point_1">7.1-kanaligt surroundljud</string>
     <string name="exo_track_unknown">Okänt</string>
     <string name="exposed_dropdown_menu_content_description">Visa rullgardinsmenyn</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Kopiera länk"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Öppna i webbläsaren"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Dela länk"</string>
     <string name="icon_content_description">Dialogikon</string>
     <string name="idenfy_additional_support_view_button_title">GÅ TILLBAKA</string>
     <string name="idenfy_additional_support_view_description">Verifieringsprocessen utfördes inte. Om du har några frågor, vänligen kontakta vårt kundsupportteam.</string>

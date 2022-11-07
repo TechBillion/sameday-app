@@ -63,6 +63,7 @@
     <string name="common_open_on_phone">Telefonda açın</string>
     <string name="common_signin_button_text">Daxil olun</string>
     <string name="common_signin_button_text_long">Google ilə daxil olun</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Link buferə kopyalandı"</string>
     <string msgid="8038256446254964252" name="default_error_message">"Yanlış daxiletmə"</string>
     <string name="error_icon_content_description">Xəta</string>
     <string name="exo_controls_cc_disabled_description">Subtitrləri aktiv edin</string>
@@ -118,6 +119,9 @@
     <string name="exo_track_surround_7_point_1">7.1 yüksək səs</string>
     <string name="exo_track_unknown">Naməlum</string>
     <string name="exposed_dropdown_menu_content_description">Açılan menyunu göstərin</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Linki kopyalayın"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Brauzerdə açın"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Linki paylaşın"</string>
     <string name="icon_content_description">Dialoq ikonası</string>
     <string msgid="6827826412747255547" name="in_progress">"Davam edir"</string>
     <string msgid="2486394087603402002" name="indeterminate">"Nə seçilməyib, nə də seçim ləğv edilməyib"</string>

@@ -63,6 +63,7 @@
     <string name="common_open_on_phone">Buksan sa telepono</string>
     <string name="common_signin_button_text">Mag-sign in</string>
     <string name="common_signin_button_text_long">Mag-sign in sa Google</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Nakopya sa clipboard ang link"</string>
     <string msgid="8038256446254964252" name="default_error_message">"Invalid na input"</string>
     <string name="error_icon_content_description">Error</string>
     <string name="exo_controls_cc_disabled_description">I-enable ang mga subtitle</string>
@@ -118,6 +119,9 @@
     <string name="exo_track_surround_7_point_1">7.1 na surround sound</string>
     <string name="exo_track_unknown">Hindi Alam</string>
     <string name="exposed_dropdown_menu_content_description">Ipakita ang dropdown na menu</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Kopyahin ang link"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Buksan sa browser"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Ibahagi ang link"</string>
     <string name="icon_content_description">Icon ng Dialog</string>
     <string msgid="6827826412747255547" name="in_progress">"Isinasagawa"</string>
     <string msgid="2486394087603402002" name="indeterminate">"Hindi may check o walang check"</string>

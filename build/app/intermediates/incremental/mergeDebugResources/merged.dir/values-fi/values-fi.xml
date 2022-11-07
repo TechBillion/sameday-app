@@ -63,6 +63,7 @@
     <string name="common_open_on_phone">Avaa puhelimessa</string>
     <string name="common_signin_button_text">Kirjaudu sisään</string>
     <string name="common_signin_button_text_long">Kirjaudu Google-tilille</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Linkki kopioitu leikepöydälle"</string>
     <string msgid="8038256446254964252" name="default_error_message">"Virheellinen syöte"</string>
     <string name="error_icon_content_description">Virhe</string>
     <string name="exo_controls_cc_disabled_description">Ota tekstitykset käyttöön</string>
@@ -118,6 +119,9 @@
     <string name="exo_track_surround_7_point_1">7.1-surround-ääni</string>
     <string name="exo_track_unknown">Tuntematon</string>
     <string name="exposed_dropdown_menu_content_description">Näytä avattava valikko</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Kopioi linkki"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Avaa selaimessa"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Jaa linkki"</string>
     <string name="icon_content_description">Valintaikkunan kuvake</string>
     <string msgid="6827826412747255547" name="in_progress">"Kesken"</string>
     <string msgid="2486394087603402002" name="indeterminate">"Ei valittu eikä valitsematta"</string>

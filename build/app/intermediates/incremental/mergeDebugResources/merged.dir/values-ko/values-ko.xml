@@ -63,6 +63,7 @@
     <string name="common_open_on_phone">스마트폰에서 열기</string>
     <string name="common_signin_button_text">로그인</string>
     <string name="common_signin_button_text_long">Google 계정으로 로그인</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"클립보드에 링크 복사됨"</string>
     <string msgid="8038256446254964252" name="default_error_message">"입력이 잘못됨"</string>
     <string name="error_icon_content_description">오류</string>
     <string name="exo_controls_cc_disabled_description">자막 사용 설정</string>
@@ -118,6 +119,9 @@
     <string name="exo_track_surround_7_point_1">7.1 서라운드 사운드</string>
     <string name="exo_track_unknown">알 수 없음</string>
     <string name="exposed_dropdown_menu_content_description">드롭다운 메뉴 표시</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"링크 복사"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"브라우저에서 열기"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"링크 공유"</string>
     <string name="icon_content_description">대화상자 아이콘</string>
     <string msgid="6827826412747255547" name="in_progress">"진행 중"</string>
     <string msgid="2486394087603402002" name="indeterminate">"선택 또는 선택 해제되지 않음"</string>

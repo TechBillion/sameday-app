@@ -63,6 +63,7 @@
     <string name="common_open_on_phone">Телефондо ачык</string>
     <string name="common_signin_button_text">Кирүү</string>
     <string name="common_signin_button_text_long">Google менен кирүү</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Шилтеме буферге көчүрүлдү"</string>
     <string msgid="8038256446254964252" name="default_error_message">"Киргизилген маалымат жараксыз"</string>
     <string name="error_icon_content_description">Ката</string>
     <string name="exo_controls_cc_disabled_description">Коштомо жазууларды иштетүү</string>
@@ -118,6 +119,9 @@
     <string name="exo_track_surround_7_point_1">7.1 көлөмдүү добуш</string>
     <string name="exo_track_unknown">Белгисиз</string>
     <string name="exposed_dropdown_menu_content_description">Түрүлмө менюну көрсөтүү</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Шилтемени көчүрүү"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Серепчиден ачуу"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Шилтемени бөлүшүү"</string>
     <string name="icon_content_description">Диалог сүрөтчөсү</string>
     <string msgid="6827826412747255547" name="in_progress">"Аткарылууда"</string>
     <string msgid="2486394087603402002" name="indeterminate">"Белгиленген же белгиленбеген эмес"</string>

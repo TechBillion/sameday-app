@@ -136,6 +136,7 @@
     <string name="common_open_on_phone">Apri sul telefono</string>
     <string name="common_signin_button_text">Accedi</string>
     <string name="common_signin_button_text_long">Accedi con Google</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Link copiato negli appunti"</string>
     <string msgid="8038256446254964252" name="default_error_message">"Valore non valido"</string>
     <string name="error_icon_content_description">Errore</string>
     <string name="exo_controls_cc_disabled_description">Attiva i sottotitoli</string>
@@ -191,6 +192,9 @@
     <string name="exo_track_surround_7_point_1">Audio surround 7.1</string>
     <string name="exo_track_unknown">Sconosciuta</string>
     <string name="exposed_dropdown_menu_content_description">Mostra il menu a discesa</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Copia link"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Apri nel browser"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Condividi link"</string>
     <string name="icon_content_description">Icona della finestra di dialogo</string>
     <string name="idenfy_additional_support_view_button_title">RITORNARE</string>
     <string name="idenfy_additional_support_view_description">Il processo di identificazione non è stato eseguito. In caso di domande, contattare il nostro team di assistenza clienti</string>

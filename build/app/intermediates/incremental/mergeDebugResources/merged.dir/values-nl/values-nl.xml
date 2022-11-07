@@ -135,6 +135,7 @@
     <string name="common_open_on_phone">Openen op telefoon</string>
     <string name="common_signin_button_text">Inloggen</string>
     <string name="common_signin_button_text_long">Inloggen met Google</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Link naar klembord gekopieerd"</string>
     <string msgid="8038256446254964252" name="default_error_message">"Ongeldige invoer"</string>
     <string name="error_icon_content_description">Fout</string>
     <string name="exo_controls_cc_disabled_description">Ondertiteling aanzetten</string>
@@ -190,6 +191,9 @@
     <string name="exo_track_surround_7_point_1">7.1 surroundgeluid</string>
     <string name="exo_track_unknown">Onbekend</string>
     <string name="exposed_dropdown_menu_content_description">Dropdownmenu weergeven</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Link kopiëren"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Openen in browser"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Link delen"</string>
     <string name="icon_content_description">Icoon voor dialoogvenster</string>
     <string name="idenfy_additional_support_view_button_title">GA TERUG</string>
     <string name="idenfy_additional_support_view_description">Het verificatieproces werd niet uitgevoerd. Neem contact op met ons supportteam als je vragen hebt.</string>
