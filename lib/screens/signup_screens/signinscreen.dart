@@ -2,15 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sameday/global_variables.dart';
-import 'package:sameday/screens/login_screens/mobilelogin.dart';
 import 'package:sameday/screens/signup_screens/signup_screens.dart';
-import 'package:sameday/screens/signup_screens/signuptest.dart';
+import 'package:sameday/widgets/blue_button.dart';
 import 'package:sameday/widgets/polygon_image.dart';
 
 import '../../size_config.dart';
 import '../login_screens/loginscreen.dart';
-import '../login_screens/logintest.dart';
-import '../sameday_main_screen/sameday_main_screen.dart';
 
 class Signinhome extends StatefulWidget {
   const Signinhome({Key? key}) : super(key: key);
@@ -18,14 +15,9 @@ class Signinhome extends StatefulWidget {
   @override
   _SigninhomeState createState() => _SigninhomeState();
 }
+
 @override
-void initState() {
-
-
-}
-
-
-
+void initState() {}
 
 class _SigninhomeState extends State<Signinhome> {
   @override
@@ -51,9 +43,7 @@ class _SigninhomeState extends State<Signinhome> {
                 ),
                 child: Transform.translate(
                     offset: Offset(-ScreenWidth * 0.07, 0),
-                    child: const PolygonImage())
-            ),
-
+                    child: const PolygonImage())),
             Center(
               child: Column(
                 children: [
@@ -67,52 +57,17 @@ class _SigninhomeState extends State<Signinhome> {
                   const SizedBox(
                     height: 30,
                   ),
-                  Container(
-                    width: 330 * SizeConfig.widthMultiplier!,
-                    height: 56 * SizeConfig.heightMultiplier!,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8 * SizeConfig.widthMultiplier!)),
-                      color: const Color(0xffFF7800),
-                    ),
-                    child: Stack(
-                      children: [
 
-
-
-
-                        Center(
-                            child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Login",
-                              style: TextStyle(
-                                  color: const Color(0xffEDFCFE),
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: SizeConfig.textMultiplier! * 14.0),
-                            )
-                          ],
-                        )),
-                        Positioned.fill(
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius:
-                                  BorderRadius.circular(ScreenWidth * 0.01333),
-                              onTap: () {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            LogInScreen()));
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  BlueButton(
+                    title: "Login",
+                    onTap: (){
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LogInScreen()));
+                    },
                   ),
+
                   SizedBox(
                     height: 15 * SizeConfig.heightMultiplier!,
                   ),
@@ -124,7 +79,7 @@ class _SigninhomeState extends State<Signinhome> {
                           color: const Color(0xff3b8ec8),
                         ),
                         borderRadius: BorderRadius.all(
-                            Radius.circular(8 * SizeConfig.widthMultiplier!)),
+                            Radius.circular(7 * SizeConfig.widthMultiplier!)),
                         color: const Color(0xffFFFFFF)),
                     child: Stack(
                       children: [
@@ -146,14 +101,9 @@ class _SigninhomeState extends State<Signinhome> {
                             color: Colors.transparent,
                             child: InkWell(
                               borderRadius:
-                                  BorderRadius.circular(ScreenWidth * 0.01333),
+                                  BorderRadius.circular(7 * SizeConfig.widthMultiplier!),
                               onTap: () {
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) =>
-                                //         Register ()));
-                                Navigator.pushReplacement(
+                                Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => SignUpScreen()));
@@ -163,6 +113,7 @@ class _SigninhomeState extends State<Signinhome> {
                         ),
                       ],
                     ),
+
                   ),
                 ],
               ),

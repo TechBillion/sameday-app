@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="idenfy_dimen_identification_results_documents_progress_bar_oval_margin">26dp
-    </dimen>
-    <dimen name="idenfy_dimen_identification_results_documents_steps_text_view_size">24sp</dimen>
-</resources>

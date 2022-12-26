@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:sameday/global_variables.dart';
 import 'package:sameday/size_config.dart';
+import 'package:sameday/widgets/blue_button.dart';
 import 'package:sameday/widgets/polygon_image.dart';
 
 class NoConnection extends StatelessWidget {
@@ -12,8 +13,9 @@ class NoConnection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: ()async{
-        InternetConnectionStatus isDeviceConnected = await InternetConnectionChecker().connectionStatus;
+      onWillPop: () async {
+        InternetConnectionStatus isDeviceConnected =
+            await InternetConnectionChecker().connectionStatus;
         return isDeviceConnected == InternetConnectionStatus.connected;
       },
       child: Stack(
@@ -41,7 +43,8 @@ class NoConnection extends StatelessWidget {
                 top: 30 * SizeConfig.heightMultiplier!),
             height: 130 * SizeConfig.imageSizeMultiplier!,
             child: const RotationTransition(
-                turns: AlwaysStoppedAnimation(122 / 360), child: PolygonImage()),
+                turns: AlwaysStoppedAnimation(122 / 360),
+                child: PolygonImage()),
           ),
           const SafeArea(
             child: Scaffold(
@@ -63,78 +66,54 @@ class NoConnections extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          SizedBox(
-            height: 20 * SizeConfig.heightMultiplier!,
+          SizedBox(height: 20 * SizeConfig.heightMultiplier!,),
+          Transform.scale(
+            scale: 1.3,
+            child: Image.asset(
+              'images/sameday_text.png',
+              width: ScreenWidth * 0.5,
+              height: ScreenHeight * 0.03,
+            ),
           ),
-          Image.asset(
-            "assets/samedaylogo.png",
-            height: 26 * SizeConfig.imageSizeMultiplier!,
-          ),
-          SizedBox(
-            height: 100 * SizeConfig.heightMultiplier!,
-          ),
+          SizedBox(height: 50 * SizeConfig.heightMultiplier!,),
+
+
           Image.asset(
             "assets/no_connection.png",
-            height: 330 * SizeConfig.imageSizeMultiplier!,
+            height: 300 * SizeConfig.imageSizeMultiplier!,
           ),
+          SizedBox(height: 10* SizeConfig.heightMultiplier!,),
+
           Text(
-            'No Connection To\nThe internet',
+            'No Connection To\nThe Internet',
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: 16.93 * SizeConfig.textMultiplier!,
+                fontSize: 16 * SizeConfig.textMultiplier!,
                 fontWeight: FontWeight.w700,
-                color: darkBlueTextColor),
+                color: Color(0xff0398FF)),
           ),
+          SizedBox(height: 10 * SizeConfig.heightMultiplier!,),
+
           Text(
             'You’re offline. check your connection\n or try again later',
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 11 * SizeConfig.textMultiplier!,
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w500,
                 color: Color(0xff56646C)),
           ),
           SizedBox(
-            height: 15 * SizeConfig.heightMultiplier!,
+            height: 20 * SizeConfig.heightMultiplier!,
           ),
-          GestureDetector(
+          BlueButton(
+            title: "Try Again",
             onTap: (){
+
               AppSettings.openWirelessSettings();
 
             },
-            child: Container(
-                margin: EdgeInsets.fromLTRB(
-                    ScreenWidth * 0.1, 0.0, ScreenWidth * 0.1, 0.0),
-                child: Container(
-                  width: 270 * SizeConfig.widthMultiplier!,
-                  height: 60 * SizeConfig.heightMultiplier!,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(2)),
-                    color: Color(0xff223DC1),
-                  ),
-                  child: Stack(
-                    children: [
-                      Center(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: ScreenWidth * 0.01,
-                              ),
-                              Text(
-                                "Try Again",
-                                style: TextStyle(
-                                    color: const Color(0xffEDFCFE),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: SizeConfig.textMultiplier! * 16.0),
-                              ),
 
-
-                            ],
-                          )),
-                    ],
-                  ),
-                )),
-          ),
+          )
         ],
       ),
     );

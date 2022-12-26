@@ -1,14 +1,17 @@
 import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:sameday/screens/sameday_main_screen/homescreen.dart';
 import 'package:sameday/screens/sameday_main_screen/secondhome_screen.dart';
+
 import '../../global_variables.dart';
 import '../../notificationservice/local_notification_service_dart.dart';
 import '../../size_config.dart';
 import '../services_screens/opd_booking_screen.dart';
+import '../user_setting_screen/user_setting_screen.dart';
 
 class SameDayMainScreen extends StatefulWidget {
   const SameDayMainScreen({Key? key}) : super(key: key);
@@ -19,13 +22,11 @@ class SameDayMainScreen extends StatefulWidget {
 
 class SameDayMainScreenState extends State<SameDayMainScreen>
     with TickerProviderStateMixin {
-
   String deviceTokenToSendPushNotification = "";
 
   //scaffoldKey to open drawer
   var scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<SameDayMainScreenState> key = GlobalKey();
-
 
   Future<void> getDeviceTokenToSendNotification() async {
     final FirebaseMessaging _fcm = FirebaseMessaging.instance;
@@ -33,7 +34,6 @@ class SameDayMainScreenState extends State<SameDayMainScreen>
     deviceTokenToSendPushNotification = token.toString();
     print("Token Value $deviceTokenToSendPushNotification");
   }
-
 
   //index for screen management in indexed stack
 
@@ -47,7 +47,7 @@ class SameDayMainScreenState extends State<SameDayMainScreen>
     // when you click on notification app open from terminated state and you can get notification data in this method
 
     FirebaseMessaging.instance.getInitialMessage().then(
-          (message) {
+      (message) {
         print("FirebaseMessaging.instance.getInitialMessage");
         if (message != null) {
           print("New Notification");
@@ -66,7 +66,7 @@ class SameDayMainScreenState extends State<SameDayMainScreen>
 
     // 2. This method only call when App in forground it mean app must be opened
     FirebaseMessaging.onMessage.listen(
-          (message) {
+      (message) {
         print("FirebaseMessaging.onMessage.listen");
         if (message.notification != null) {
           print(message.notification!.title);
@@ -77,11 +77,9 @@ class SameDayMainScreenState extends State<SameDayMainScreen>
       },
     );
 
-
-
     // 3. This method only call when App in background and not terminated(not closed)
     FirebaseMessaging.onMessageOpenedApp.listen(
-          (message) {
+      (message) {
         print("FirebaseMessaging.onMessageOpenedApp.listen");
         if (message.notification != null) {
           print(message.notification!.title);
@@ -90,10 +88,6 @@ class SameDayMainScreenState extends State<SameDayMainScreen>
         }
       },
     );
-
-
-
-
 
     Future.delayed(const Duration(seconds: 1, milliseconds: 100), () {
       //checkupdate();
@@ -118,8 +112,7 @@ class SameDayMainScreenState extends State<SameDayMainScreen>
             height: ScreenWidth * 0.0642,
             width: ScreenWidth * 0.0642,
             color: selectedPageIndex == 0
-                ? const Color(0xff4AB4FF
-            ).withOpacity(0.51)
+                ? const Color(0xff4AB4FF).withOpacity(0.51)
                 : const Color(0xffD8D2E4)),
         label: "",
       ),
@@ -128,8 +121,7 @@ class SameDayMainScreenState extends State<SameDayMainScreen>
             height: ScreenWidth * 0.0642,
             width: ScreenWidth * 0.0642,
             color: selectedPageIndex == 1
-                ? const Color(0xff82CCFF
-            )
+                ? const Color(0xff82CCFF)
                 : const Color(0xffD8D2E4)),
         label: "",
       ),
@@ -144,7 +136,6 @@ class SameDayMainScreenState extends State<SameDayMainScreen>
       ),
       BottomNavigationBarItem(
         icon: SvgPicture.asset(
-
           "images/proflie_icon.svg",
           height: ScreenWidth * 0.0642,
           width: ScreenWidth * 0.0642,
@@ -174,33 +165,30 @@ class SameDayMainScreenState extends State<SameDayMainScreen>
         key: key,
         body: WillPopScope(
           onWillPop: () async {
-
             // return !await navigatorKeys[_pageIndex].currentState.context;
             return true;
             // Navigator.pop(navigatorKeys[_pageIndex].currentState.context);
           },
           child: Obx(
-                () => (selectedPageIndex.value != null)
+            () => (selectedPageIndex.value != null)
                 ? PageView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: pageController,
-              //list of pages to navigate through bottom navigation bar
-              children:  const [
-                HomeScreen(),
-                SecondHomeScreen(),
-                OpdBookingScreen(),
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: pageController,
+                    //list of pages to navigate through bottom navigation bar
+                    children: [
+                      HomeScreen(),
+                      SecondHomeScreen(),
+                      OpdBookingScreen(),
 
-
-
-                // const  activityAndTransactionsScreen(),
-                // UserSettingScreen(),
-              ],
-            )
+                      // const  activityAndTransactionsScreen(),
+                       UserSettingScreen(),
+                    ],
+                  )
                 : Container(),
           ),
         ),
         bottomNavigationBar: Obx(
-              () => Container(
+          () => Container(
               height: (Platform.isAndroid)
                   ? 65 * SizeConfig.heightMultiplier!
                   : ScreenHeight * 0.09,

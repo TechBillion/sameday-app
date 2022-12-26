@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sameday/api_handlers/user_signup_api.dart';
 import 'package:sameday/screens/signup_screens/account_created.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,8 +18,6 @@ import '../../global_variables.dart';
 import '../../size_config.dart';
 import '../../widgets/remove_scroll_glow.dart';
 import '../../widgets/sameday_appbar.dart';
-import 'package:http/http.dart' as http;
-
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -28,7 +27,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final _firestore = FirebaseFirestore.instance;
 
   /*
   * Account type 0 for none
@@ -73,7 +71,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   void initState() {
     super.initState();
-    // fetchData();
   }
 
   @override
@@ -82,17 +79,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
     password.dispose();
     confirmPassword.dispose();
     phoneNumber.dispose();
-
     super.dispose();
   }
 
-  final _auth = FirebaseAuth.instance;
-
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController otpVerify = TextEditingController();
   final TextEditingController phoneNumber = TextEditingController();
   final TextEditingController confirmPassword = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
+  RxBool _userClickedOnOtpContinue = false.obs;
+  RxBool isOtpIncorrect = false.obs;
 
+  String otp = "";
   final FocusNode _usernameFocusNode = FocusNode();
   final GlobalKey<FormState> _validatorKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _confirmPassword = GlobalKey<FormState>();
@@ -108,10 +107,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Colors.white,
           ),
           Scaffold(
-            backgroundColor: Color(0xffF9FBFF),
+            backgroundColor: const Color(0xffF9FBFF),
             appBar: SameDayAppBar(
               parentContext: context,
-              wantOtherIcons: false,
+              wantOtherIcons: true,
             ),
             resizeToAvoidBottomInset: true,
             body: ScrollConfiguration(
@@ -133,7 +132,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             TextSpan(
                               text: "Already have an Account? ",
                               style: TextStyle(
-                                  color: Color(0xff585858),
+                                  color: const Color(0xff585858),
                                   fontWeight: FontWeight.w400,
                                   fontSize: SizeConfig.textMultiplier! * 14),
                             ),
@@ -141,7 +140,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               text: "Signin",
                               style: TextStyle(
                                   decoration: TextDecoration.underline,
-                                  color: Color(0xff0398FF),
+                                  color: const Color(0xff0398FF),
                                   fontWeight: FontWeight.w500,
                                   fontSize: SizeConfig.textMultiplier! * 14),
                               recognizer: TapGestureRecognizer()
@@ -164,7 +163,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       * */
                             Container(
                               decoration:
-                                  BoxDecoration(color: Color(0xffFFFFFF)),
+                                  const BoxDecoration(color: Color(0xffFFFFFF)),
                               height: 55 * SizeConfig.heightMultiplier!,
                               margin: EdgeInsets.only(
                                   left: 30 * SizeConfig.widthMultiplier!,
@@ -174,7 +173,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 cursorRadius: const Radius.circular(10.0),
                                 cursorColor: greenThemeColor,
                                 style: TextStyle(
-                                    color: Color(0xff585858),
+                                    color: const Color(0xff585858),
                                     fontSize:
                                         SizeConfig.textMultiplier! * 15.0),
                                 maxLength: 10,
@@ -183,11 +182,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ],
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
-                                  fillColor: Color(0xffFFFFFF),
+                                  fillColor: const Color(0xffFFFFFF),
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color:
-                                            Color(0xff56646C).withOpacity(0.2),
+                                            const Color(0xff56646C).withOpacity(0.2),
                                         width: 1),
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(
@@ -221,7 +220,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   labelStyle:
                                       const TextStyle(color: Colors.black),
-                                  prefixStyle: TextStyle(
+                                  prefixStyle: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400),
@@ -246,7 +245,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       * */
                             Container(
                                 decoration:
-                                    BoxDecoration(color: Color(0xffFFFFFF)),
+                                    const BoxDecoration(color: Color(0xffFFFFFF)),
                                 margin: EdgeInsets.only(
                                     left: 30 * SizeConfig.widthMultiplier!,
                                     right: 30 * SizeConfig.widthMultiplier!),
@@ -277,11 +276,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     cursorRadius: const Radius.circular(10.0),
                                     cursorColor: greenThemeColor,
                                     style: TextStyle(
-                                        color: Color(0xff585858),
+                                        color: const Color(0xff585858),
                                         fontSize:
                                             SizeConfig.textMultiplier! * 15.0),
                                     decoration: InputDecoration(
-                                        fillColor: Color(0xffFFFFFF),
+                                        fillColor: const Color(0xffFFFFFF),
                                         errorStyle: TextStyle(
                                             color: Colors.redAccent
                                                 .withOpacity(0.9),
@@ -289,7 +288,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             height: 1),
                                         enabledBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
-                                              color: Color(0xff56646C)
+                                              color: const Color(0xff56646C)
                                                   .withOpacity(0.2),
                                               width: 1),
                                           borderRadius: BorderRadius.all(
@@ -320,7 +319,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             fontSize:
                                                 SizeConfig.textMultiplier! *
                                                     14.0,
-                                            color: Color(0xff585858)),
+                                            color: const Color(0xff585858)),
                                         focusedBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: greenThemeColor
@@ -360,7 +359,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             Container(
                               decoration:
-                                  BoxDecoration(color: Color(0xffFFFFFF)),
+                                  const BoxDecoration(color: Color(0xffFFFFFF)),
                               margin: EdgeInsets.only(
                                   left: 30 * SizeConfig.widthMultiplier!,
                                   right: 30 * SizeConfig.widthMultiplier!),
@@ -398,11 +397,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   cursorRadius: const Radius.circular(10.0),
                                   cursorColor: greenThemeColor,
                                   style: TextStyle(
-                                      color: Color(0xff585858),
+                                      color: const Color(0xff585858),
                                       fontSize:
                                           SizeConfig.textMultiplier! * 15.0),
                                   decoration: InputDecoration(
-                                      fillColor: Color(0xffFFFFFF),
+                                      fillColor: const Color(0xffFFFFFF),
                                       errorStyle: TextStyle(
                                           color:
                                               Colors.redAccent.withOpacity(0.9),
@@ -410,7 +409,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           height: 1),
                                       enabledBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: Color(0xff56646C)
+                                            color: const Color(0xff56646C)
                                                 .withOpacity(0.2),
                                             width: 1),
                                         borderRadius: BorderRadius.all(
@@ -455,7 +454,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           fontWeight: FontWeight.w400,
                                           fontSize:
                                               SizeConfig.textMultiplier! * 14.0,
-                                          color: Color(0xff585858)),
+                                          color: const Color(0xff585858)),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: greenThemeColor
@@ -550,7 +549,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     * */
 
                       Container(
-                        decoration: BoxDecoration(color: Color(0xffFFFFFF)),
+                        decoration: const BoxDecoration(color: Color(0xffFFFFFF)),
                         margin: EdgeInsets.only(
                             left: 30 * SizeConfig.widthMultiplier!,
                             right: 30 * SizeConfig.widthMultiplier!),
@@ -570,10 +569,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           cursorRadius: const Radius.circular(10.0),
                           cursorColor: greenThemeColor,
                           style: TextStyle(
-                              color: Color(0xff585858),
+                              color: const Color(0xff585858),
                               fontSize: SizeConfig.textMultiplier! * 15.0),
                           decoration: InputDecoration(
-                            fillColor: Color(0xffFFFFFF),
+                            fillColor: const Color(0xffFFFFFF),
                             errorStyle: TextStyle(
                                 color: Colors.redAccent.withOpacity(0.9),
                                 fontSize: 10,
@@ -610,7 +609,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: SizeConfig.textMultiplier! * 14.0,
-                                color: Color(0xff585858)),
+                                color: const Color(0xff585858)),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: greenThemeColor.withOpacity(0.3),
@@ -624,7 +623,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  color: Color(0xff56646C).withOpacity(0.2),
+                                  color: const Color(0xff56646C).withOpacity(0.2),
                                   width: 1),
                               borderRadius: BorderRadius.all(Radius.circular(
                                   SizeConfig.widthMultiplier! * 8)),
@@ -746,8 +745,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               password.text,
                                               confirmPassword.text,
                                             );
-                                         sendOtp(phoneNumber.text);
-
+                                            sendOtp(phoneNumber.text);
                                           }
                                         } else {
                                           ScaffoldMessenger.of(context)
@@ -766,99 +764,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               )),
                         ),
                       ),
-                      // Container(
-                      //     margin: EdgeInsets.fromLTRB(
-                      //         ScreenWidth * 0.1, 0.0, ScreenWidth * 0.1, 0.0),
-                      //     child: Container(
-                      //       width: ScreenWidth,
-                      //       height: ScreenHeight * 0.0678,
-                      //       decoration: BoxDecoration(
-                      //
-                      //         boxShadow: [
-                      //           BoxShadow(
-                      //               color: const Color(0xffFF7800).withOpacity(0.3), offset:const  Offset(0, 10), blurRadius:10 * SizeConfig.widthMultiplier!,spreadRadius: 0)
-                      //         ],
-                      //         gradient: const LinearGradient(
-                      //           begin: Alignment.topCenter,
-                      //           end: Alignment.bottomCenter,
-                      //           stops: [0.0, 1.0],
-                      //           colors: [
-                      //             Color(0xffFF7800),
-                      //             Color(0xffFFAB61),
-                      //           ],
-                      //         ),
-                      //
-                      //
-                      //
-                      //
-                      //
-                      //         borderRadius: BorderRadius.all(
-                      //             Radius.circular(ScreenWidth * 0.0133333)),
-                      //         color: userClickedOnSignupButton
-                      //             ? greenThemeColor
-                      //             : Color(0xffFF7800),
-                      //       ),
-                      //       child: Stack(
-                      //         children: [
-                      //           Center(
-                      //               child:
-                      //               // !_userClickedLogInButton
-                      //               //     ?
-                      //               userClickedOnSignupButton
-                      //                   ? Image.asset(
-                      //                 'images/loader_with_animation.gif',
-                      //                 width:
-                      //                 80 * SizeConfig.widthMultiplier!,
-                      //               )
-                      //                   : Row(
-                      //                 mainAxisSize: MainAxisSize.min,
-                      //                 children: [
-                      //                   SizedBox(
-                      //                     width: ScreenWidth * 0.05,
-                      //                     child: Center(
-                      //                         child: SvgPicture.asset(
-                      //                           "images/lock_icon.svg",
-                      //                           width: ScreenWidth * 0.035,
-                      //                           color: const Color(0xffEDFCFE),
-                      //                         )),
-                      //                   ),
-                      //                   SizedBox(
-                      //                     width: ScreenWidth * 0.01,
-                      //                   ),
-                      //                   Text(
-                      //                     "Login",
-                      //                     style: TextStyle(
-                      //                         color:
-                      //                         const Color(0xffEDFCFE),
-                      //                         fontWeight: FontWeight.w500,
-                      //                         fontSize: SizeConfig
-                      //                             .textMultiplier! *
-                      //                             14.0),
-                      //                   )
-                      //                 ],
-                      //               )),
-                      //           Positioned.fill(
-                      //             child: Material(
-                      //               color: Colors.transparent,
-                      //               child: InkWell(
-                      //                 borderRadius: BorderRadius.circular(
-                      //                     ScreenWidth * 0.01333),
-                      //                 onTap: () {
-                      //                   if (usernameKey.currentState!.validate() &&
-                      //                       !_userClickedLogInButton) {
-                      //                     setState(() {
-                      //                       userClickedOnSignupButton = true;
-                      //                     });
-                      //                     FocusManager.instance.primaryFocus
-                      //                         ?.unfocus();
-                      //                   }
-                      //                 },
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     )),
+
 
                       ///accept terms and conditions
                       Container(
@@ -880,7 +786,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     child: Transform.scale(
                                       scale: 0.75,
                                       child: Checkbox(
-                                          activeColor: greenThemeColor,
+                                          activeColor: Color(0xff0398FF),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(
@@ -911,7 +817,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           text:
                                               "I here by confirm that I have read and agree to the ",
                                           style: TextStyle(
-                                              color: Color(0xff585858),
+                                              color: const Color(0xff585858),
                                               fontWeight: FontWeight.w400,
                                               fontSize:
                                                   SizeConfig.textMultiplier! *
@@ -922,7 +828,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             style: TextStyle(
                                                 decoration:
                                                     TextDecoration.underline,
-                                                color: Color(0xff223DC1),
+                                                color: const Color(0xff223DC1),
                                                 fontSize:
                                                     SizeConfig.textMultiplier! *
                                                         12.0,
@@ -934,7 +840,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           text: ", and ",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w400,
-                                              color: Color(0xff585858),
+                                              color: const Color(0xff585858),
                                               fontSize:
                                                   SizeConfig.textMultiplier! *
                                                       12.0),
@@ -944,7 +850,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             style: TextStyle(
                                                 decoration:
                                                     TextDecoration.underline,
-                                                color: Color(0xff223DC1),
+                                                color: const Color(0xff223DC1),
                                                 fontSize:
                                                     SizeConfig.textMultiplier! *
                                                         12.0,
@@ -956,7 +862,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           text: " of SameDay.",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w400,
-                                              color: Color(0xff585858),
+                                              color: const Color(0xff585858),
                                               fontSize:
                                                   SizeConfig.textMultiplier! *
                                                       12.0),
@@ -975,8 +881,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-
-  Future<void> createAccount( String phoneNumber,String email, String password,
+  Future<void> createAccount(String phoneNumber, String email, String password,
       String confirmPassword) async {
     signUpAPI createNewUser = signUpAPI(
       phoneNumber: phoneNumber,
@@ -987,13 +892,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     int? checkSuccess;
 
     checkSuccess = await createNewUser.accountSignUp();
-    if (checkSuccess == 1)  {
+    if (checkSuccess == 1) {
       //if user account is created successfully
       userClickedOnSignupButton.value = false;
       sendOtp;
       //saving username and password for future autofill
       TextInput.finishAutofillContext();
-
     }
 
     //is email already exists in
@@ -1012,71 +916,246 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  void sendOtp(String otpPhoneNumber) async{
-
-    final response = await http.post(Uri.parse("http://apis.samedaylko.com/api/MobileOtpVerification/sendOtp"),
-      body:jsonEncode ({
-        "phoneNumber":otpPhoneNumber,
+  void sendOtp(String otpPhoneNumber) async {
+    final response = await http.post(
+      Uri.parse("http://apis.samedaylko.com/api/MobileOtpVerification/sendOtp"),
+      body: jsonEncode({
+        "phoneNumber": otpPhoneNumber,
       }),
-      headers:  {
-
-        HttpHeaders.contentTypeHeader : 'application/json',
-
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
       },
-
     );
     print("helloo " + response.statusCode.toString());
 
     if (response.statusCode == 200) {
       //if account created successfully then return 1
       //pushing to account created screen
+
+      _showOtpPopup();
+    }
+  }
+
+  void validateOtp(String otpPhoneNumber, String otp) async {
+    final response = await http.post(
+      Uri.parse(
+          "http://apis.samedaylko.com/api/MobileOtpVerification/verifyOtp"),
+      body: jsonEncode({
+        "mobileNumber": otpPhoneNumber,
+        "otp": otp,
+      }),
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+    );
+    print("helloo " + response.statusCode.toString());
+
+    print("helloo " + response.body.toString());
+
+    if (response.statusCode == 200) {
+      //if account created successfully then return 1
+      //pushing to account created screen
+
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => const AccountCreated()));
     }
+    if (response.statusCode == 400) {
+      //if account created successfully then return 1
+      //pushing to account created screen
+
+      // Navigator.pushReplacement(context,
+      //     MaterialPageRoute(builder: (context) => const AccountCreated()));
+    }
+
+    _userClickedOnOtpContinue.value = false;
   }
-  // signUp(String email, String password, String phoneNumber) async {
-  //   if (_validatorKey.currentState!.validate()&&!userClickedOnSignupButton.value) {
-  //     userClickedOnSignupButton.value = true;
-  //     try {
-  //       await FirebaseAuth.instance
-  //           .createUserWithEmailAndPassword(
-  //         email: email,
-  //         password: password,
-  //       ).then((signedInUser){
-  //         _firestore.collection('users').add({'email' : email,'password': password , 'phoneNumber': phoneNumber}).then((value) {
-  //           if(signedInUser != null){
-  //             Navigator.pushReplacement(
-  //                 context,
-  //                 MaterialPageRoute(
-  //                   builder: (_) => LogInScreen(),
-  //                 ));
-  //           }
-  //         });
-  //       } );
-  //     }
-  //
-  //     on FirebaseAuthException catch (e) {
-  //      if (e.code == 'email-already-in-use') {
-  //         ScaffoldMessenger.of(context)
-  //             .showSnackBar(SnackBar(
-  //           content: const Text(
-  //               "The account already exists for that email."),
-  //           backgroundColor:
-  //           Colors.redAccent.withOpacity(0.6),
-  //           elevation: 0.0,
-  //         )
-  //         );
-  //
-  //
-  //       }
-  //
-  //
-  //     } catch (e) {
-  //       print(e);
-  //     }
-  //     userClickedOnSignupButton.value = false;
-  //   }
-  // }
+
+  _showOtpPopup() {
+    RxString otpText = ''.obs;
+    showModalBottomSheet(
+        isScrollControlled: true,
+        isDismissible: true,
+        backgroundColor: Colors.black.withOpacity(0.7),
+        context: context,
+        builder: (BuildContext context) {
+          return WillPopScope(
+            onWillPop: () async {
+              _otpController.clear();
+              _userClickedOnOtpContinue.value = false;
+              return true;
+            },
+            child: Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: IntrinsicHeight(
+                child: Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 50 * SizeConfig.widthMultiplier!,
+                        vertical: 50 * SizeConfig.heightMultiplier!),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Text(
+                            "OTP VERIFICATION",
+                            style: TextStyle(
+                                color: const Color(0xff0398FF),
+                                fontSize: 18 * SizeConfig.textMultiplier!,
+                                fontWeight: FontWeight.w500,
+                                height: 1.3),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 25 * SizeConfig.heightMultiplier!,
+                        ),
+                        RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                            text: "Enter code sent to your mobile number",
+                            style: TextStyle(
+                                color: const Color(0xff2BD67B),
+                                fontSize: 14 * SizeConfig.textMultiplier!,
+                                fontWeight: FontWeight.w400,
+                                height: 1.3),
+                          ),
+                          WidgetSpan(
+                            child: InkWell(
+                              onTap: () {
+                                sendOtp(phoneNumber.text);
+                              },
+                              child: RichText(
+                                text: TextSpan(
+                                  text: " resend code",
+                                  style: TextStyle(
+                                      fontSize:
+                                          SizeConfig.textMultiplier! * 12.0,
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color(0xff0398FF)),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ])),
+                        SizedBox(
+                          height: 14 * SizeConfig.heightMultiplier!,
+                        ),
+                        Obx(() => (isOtpIncorrect.value)
+                            ? Container(
+                                margin: EdgeInsets.only(
+                                    bottom: 5 * SizeConfig.heightMultiplier!),
+                                child: Text("invalid Otp",
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize:
+                                            SizeConfig.textMultiplier! * 10,
+                                        height: 1)),
+                              )
+                            : Container()),
+                        const Spacer(),
+                        SizedBox(
+                          height: 20 * SizeConfig.heightMultiplier!,
+                        ),
+                        PinCodeTextField(
+                          enableActiveFill: true,
+                          textStyle: const TextStyle(color: Color(0xff56646C)),
+                          animationType: AnimationType.none,
+                          animationDuration: Duration.zero,
+                          autoDisposeControllers: false,
+                          showCursor: false,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              signed: false, decimal: true),
+                          pinTheme: PinTheme(
+                              selectedColor: greenThemeColor.withOpacity(0.6),
+                              selectedFillColor: Colors.white,
+                              inactiveColor:
+                                  const Color(0xffADADAD).withOpacity(0.4),
+                              errorBorderColor: Colors.red.withOpacity(0.7),
+                              shape: PinCodeFieldShape.box,
+                              borderRadius:
+                                  BorderRadius.circular(ScreenWidth * 0.013333),
+                              fieldHeight: ScreenWidth * 0.13,
+                              fieldWidth: 46 * SizeConfig.widthMultiplier!,
+                              activeFillColor: Colors.white,
+                              inactiveFillColor: Colors.white,
+                              activeColor:
+                                  const Color(0xffADADAD).withOpacity(0.4),
+                              borderWidth: 1),
+                          controller: _otpController,
+                          obscureText: false,
+                          onChanged: (String value) {
+                            otpText.value = value;
+                            isOtpIncorrect.value = false;
+                          },
+                          appContext: (context),
+                          length: 4,
+                        ),
+                        SizedBox(
+                          height: 20 * SizeConfig.heightMultiplier!,
+                        ),
+                        Obx(
+                          () => Container(
+                            width: ScreenWidth,
+                            height: 45 * SizeConfig.heightMultiplier!,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(
+                                    2 * SizeConfig.widthMultiplier!)),
+                                color: otpText.value.length < 4
+                                    ? const Color(0xff9F9F9F).withOpacity(0.1)
+                                    : _userClickedOnOtpContinue.value
+                                        ? greenThemeColor
+                                        : const Color(0xffFF7800)),
+                            child: Stack(
+                              children: [
+                                Center(
+                                    child: _userClickedOnOtpContinue.value
+                                        ? Image.asset(
+                                            'images/loader_with_animation.gif',
+                                            width: 80 *
+                                                SizeConfig.widthMultiplier!,
+                                          )
+                                        : Text(
+                                            "Verify",
+                                            style: TextStyle(
+                                                color: otpText.value.length < 4
+                                                    ? const Color(0xff9F9F9F)
+                                                    : const Color(0xffFFFFFF),
+                                                fontWeight: FontWeight.w500,
+                                                fontSize:
+                                                    SizeConfig.textMultiplier! *
+                                                        12.0),
+                                          )),
+                                Positioned.fill(
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(
+                                          ScreenWidth * 0.01),
+                                      onTap: () {
+                                        if (!_userClickedOnOtpContinue.value) {
+                                          _userClickedOnOtpContinue.value =
+                                              true;
+                                          validateOtp(phoneNumber.text,
+                                              _otpController.text);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
   void _checkPasswordStrength(String value) {
     if (value.isNotEmpty) {
       ++_passwordStrength;

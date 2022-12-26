@@ -1,4 +1,6 @@
-<svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-<ellipse cx="3.26665" cy="3.04802" rx="2.95555" ry="2.968" fill="white"/>
-<path d="M1.24055 3.00201L4.72383 3.06675M4.72383 3.06675L3.58277 1.94961M4.72383 3.06675L3.54271 4.14073" stroke="#2BD67B" stroke-width="0.5"/>
+<svg fill="none" height="7" viewBox="0 0 7 7" width="7" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="3.26665" cy="3.04802" fill="white" rx="2.95555" ry="2.968" />
+    <path
+        d="M1.24055 3.00201L4.72383 3.06675M4.72383 3.06675L3.58277 1.94961M4.72383 3.06675L3.54271 4.14073"
+        stroke="#2BD67B" stroke-width="0.5" />
 </svg>
