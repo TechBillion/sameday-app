@@ -6,6 +6,7 @@ import '../global_variables.dart';
 
 class CustomBackButton extends StatelessWidget {
   BuildContext parentContext;
+
   CustomBackButton({Key? key, required this.parentContext}) : super(key: key);
 
   @override
@@ -31,7 +32,7 @@ class CustomBackButton extends StatelessWidget {
                 elevation: MaterialStateProperty.all(0.0),
                 padding: MaterialStateProperty.all(EdgeInsets.zero),
                 shadowColor:
-                MaterialStateProperty.all(blueThemeColor.withOpacity(0.3)),
+                    MaterialStateProperty.all(blueThemeColor.withOpacity(0.3)),
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(ScreenWidth * 0.013333),
                 )),
@@ -42,10 +43,10 @@ class CustomBackButton extends StatelessWidget {
               },
               child: Center(
                   child: Icon(
-                    CupertinoIcons.left_chevron,
-                    size: ScreenWidth * 0.04,
-                    color: const Color(0xff040447),
-                  )),
+                CupertinoIcons.left_chevron,
+                size: ScreenWidth * 0.04,
+                color: const Color(0xff040447),
+              )),
             ),
           ),
         ),
@@ -59,7 +60,10 @@ class LoaderImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Image.asset('images/loader_with_animation.gif',width: 80*SizeConfig.widthMultiplier!,));
+    return Center(
+        child: Image.asset(
+      'images/loader_with_animation.gif',
+      width: 80 * SizeConfig.widthMultiplier!,
+    ));
   }
 }
-

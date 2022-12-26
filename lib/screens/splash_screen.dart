@@ -1,24 +1,24 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:sameday/screens/login_screens/loginscreen.dart';
+import 'package:sameday/screens/sameday_main_screen/sameday_main_screen.dart';
 import 'package:sameday/screens/signup_screens/signinscreen.dart';
+import 'package:sameday/user_login_handler/user_login_status.dart';
+
 import '../global_variables.dart';
 import '../main.dart';
 import '../size_config.dart';
 import 'session_expired_screen/noconnection.dart';
 
 class SplashScreen extends StatefulWidget {
-
-
-
-  const SplashScreen({Key? key, }) : super(key: key);
+  const SplashScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -26,23 +26,17 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final storage = const FlutterSecureStorage();
 
-
-  late StreamSubscription _sub;
 
   @override
   void initState() {
+    Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
+      checkLogInStatus();
+    });
     getConnectivity();
     super.initState();
-    Timer(Duration(seconds: 5),
-            ()=>Navigator.pushReplacement(context,
-            MaterialPageRoute(builder:
-                (context) =>Signinhome()
-            )
-        )
-    );
-
-
+    getToken();
   }
 
   @override
@@ -73,13 +67,10 @@ class _SplashScreenState extends State<SplashScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               // stops: [0.0,0.2],
-                              colors: [Color(0xff7AD7F0
-                              ), Color(0xffDBF3FA
-                              )],
+                              colors: [Color(0xff7AD7F0), Color(0xffDBF3FA)],
                               tileMode: TileMode.clamp)),
                     ),
                     Column(children: [
-
                       Transform.scale(
                         scale: 1.2,
                         child: Container(
@@ -104,7 +95,8 @@ class _SplashScreenState extends State<SplashScreen> {
                       child: Container(
                           height: ScreenWidth * 0.504,
                           width: ScreenWidth * 0.504,
-                          margin: EdgeInsets.only(top: 40 * SizeConfig.heightMultiplier!),
+                          margin: EdgeInsets.only(
+                              top: 40 * SizeConfig.heightMultiplier!),
                           child: Transform.rotate(
                               angle: 1,
                               child: Image.asset(
@@ -118,7 +110,9 @@ class _SplashScreenState extends State<SplashScreen> {
                       child: Container(
                           height: ScreenWidth * 0.504,
                           width: ScreenWidth * 0.504,
-                          margin: EdgeInsets.only(left: 140 * SizeConfig.widthMultiplier!,top: 50* SizeConfig.heightMultiplier!),
+                          margin: EdgeInsets.only(
+                              left: 140 * SizeConfig.widthMultiplier!,
+                              top: 50 * SizeConfig.heightMultiplier!),
                           child: Transform.rotate(
                               angle: 1,
                               child: Image.asset(
@@ -130,7 +124,8 @@ class _SplashScreenState extends State<SplashScreen> {
                         height: ScreenWidth * 0.504,
                         width: ScreenWidth * 0.504,
                         margin: EdgeInsets.only(
-                            top: ScreenHeight * 0.22, left: 150* SizeConfig.widthMultiplier!),
+                            top: ScreenHeight * 0.22,
+                            left: 150 * SizeConfig.widthMultiplier!),
                         child: Transform.rotate(
                             angle: 1,
                             child: Image.asset(
@@ -154,8 +149,8 @@ class _SplashScreenState extends State<SplashScreen> {
     if (isDeviceConnected == InternetConnectionStatus.disconnected) {
       BuildContext context = Get.context!;
       Future.delayed(const Duration(seconds: 4), () async {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const NoConnection()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const NoConnection()));
         Get.closeAllSnackbars();
       });
     }
@@ -166,8 +161,8 @@ class _SplashScreenState extends State<SplashScreen> {
       if (isDeviceConnected == InternetConnectionStatus.disconnected) {
         BuildContext context = Get.context!;
         // ignore: use_build_context_synchronously
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) =>  const NoConnection()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const NoConnection()));
         Get.closeAllSnackbars();
       } else {
         if (navigatorKey.currentState!.canPop()) {
@@ -175,5 +170,23 @@ class _SplashScreenState extends State<SplashScreen> {
         }
       }
     });
+  }
+
+  Future<void> checkLogInStatus() async {
+    logInStatus _check = logInStatus();
+    bool isLoggedIn = await _check.checkLoginStatus();
+    if (isLoggedIn) {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const SameDayMainScreen()));
+    } else {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const Signinhome()));
+    }
+  }
+
+  void getToken() async {
+    String? token = await storage.read(key: 'token');
+
+    print("hellooooooooo $token");
   }
 }

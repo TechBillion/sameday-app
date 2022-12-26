@@ -55,6 +55,7 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
   final ScrollController _verticalListController = ScrollController();
   int counter = 1;
   String genderText = "Gender";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,129 +67,141 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
             controller: _verticalListController,
             physics: const BouncingScrollPhysics(),
             child: Column(
-          children: [
-            isCompleted
-                ? _serviceContainer()
-                : SizedBox(
-              height: 700 * SizeConfig.heightMultiplier!,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Stepper(
-                        physics: const PageScrollPhysics(),
-                        elevation: 0,
-                        type: StepperType.horizontal,
-                        steps: getSteps(),
-                        currentStep: currentStep,
-                        onStepContinue: () {
-                          final isLastStep = currentStep == getSteps().length - 1;
-                          if (isLastStep) {
-                            setState(() => isCompleted = true);
-                            print('Completed');
-                          } else {
-                            setState(() => currentStep += 1);
-                          }
-                        },
-                        onStepCancel: currentStep == 0
-                            ? null
-                            : () => setState(() => currentStep -= 1),
-                        controlsBuilder:
-                            (BuildContext context, ControlsDetails controls) {
-                          final isLastStep = currentStep == getSteps().length - 1;
-                          return Container(
-                            child: Row(
-                              children: [
-                                if (currentStep != 0)
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
+              children: [
+                isCompleted
+                    ? _serviceContainer()
+                    : SizedBox(
+                        height: 700 * SizeConfig.heightMultiplier!,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Stepper(
+                            physics: const PageScrollPhysics(),
+                            elevation: 0,
+                            type: StepperType.horizontal,
+                            steps: getSteps(),
+                            currentStep: currentStep,
+                            onStepContinue: () {
+                              final isLastStep =
+                                  currentStep == getSteps().length - 1;
+                              if (isLastStep) {
+                                setState(() => isCompleted = true);
+                                print('Completed');
+                              } else {
+                                setState(() => currentStep += 1);
+                              }
+                            },
+                            onStepCancel: currentStep == 0
+                                ? null
+                                : () => setState(() => currentStep -= 1),
+                            controlsBuilder: (BuildContext context,
+                                ControlsDetails controls) {
+                              final isLastStep =
+                                  currentStep == getSteps().length - 1;
+                              return Container(
+                                child: Row(
+                                  children: [
+                                    if (currentStep != 0)
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(7 *
+                                                      SizeConfig
+                                                          .widthMultiplier!),
+                                              border: Border.all(
+                                                  color:
+                                                      const Color(0xff2BD67B))),
+                                          height:
+                                              53 * SizeConfig.heightMultiplier!,
+                                          child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  elevation: 0.0,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius
+                                                          .circular(7 *
+                                                              SizeConfig
+                                                                  .widthMultiplier!)),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 16 *
+                                                          SizeConfig
+                                                              .heightMultiplier!),
+                                                  textStyle: TextStyle(
+                                                      fontSize: 15 *
+                                                          SizeConfig
+                                                              .textMultiplier!,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              onPressed: controls.onStepCancel,
+                                              child: const Text(
+                                                "Cancel",
+                                                style: TextStyle(
+                                                    color: Color(0xff3E4B5B)),
+                                              )),
+                                        ),
+                                      ),
+                                    SizedBox(
+                                      width: 10 * SizeConfig.widthMultiplier!,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(
                                               7 * SizeConfig.widthMultiplier!),
-                                          border: Border.all(
-                                              color: const Color(0xff2BD67B))),
-                                      height: 53 * SizeConfig.heightMultiplier!,
-                                      child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.transparent,
-                                              elevation: 0.0,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(7 *
-                                                          SizeConfig
-                                                              .widthMultiplier!)),
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 16 *
-                                                      SizeConfig
-                                                          .heightMultiplier!),
-                                              textStyle: TextStyle(
-                                                  fontSize: 15 *
-                                                      SizeConfig.textMultiplier!,
-                                                  fontWeight: FontWeight.bold)),
-                                          onPressed: controls.onStepCancel,
-                                          child: const Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                                color: Color(0xff3E4B5B)),
-                                          )),
-                                    ),
-                                  ),
-                                SizedBox(
-                                  width: 10 * SizeConfig.widthMultiplier!,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          7 * SizeConfig.widthMultiplier!),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: const Color(0xffE97A0A)
-                                                .withOpacity(0.3),
-                                            offset: const Offset(0, 10),
-                                            blurRadius:
-                                                35 * SizeConfig.widthMultiplier!,
-                                            spreadRadius: 0)
-                                      ],
-                                      gradient: const LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        stops: [0.0, 1.0],
-                                        colors: [
-                                          Color(0xffE97A0A),
-                                          Color(0xffE97A0A),
-                                        ],
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: const Color(0xffE97A0A)
+                                                    .withOpacity(0.3),
+                                                offset: const Offset(0, 10),
+                                                blurRadius: 35 *
+                                                    SizeConfig.widthMultiplier!,
+                                                spreadRadius: 0)
+                                          ],
+                                          gradient: const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            stops: [0.0, 1.0],
+                                            colors: [
+                                              Color(0xffE97A0A),
+                                              Color(0xffE97A0A),
+                                            ],
+                                          ),
+                                        ),
+                                        height:
+                                            53 * SizeConfig.heightMultiplier!,
+                                        child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                elevation: 0.0,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(7 *
+                                                            SizeConfig
+                                                                .widthMultiplier!)),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 16 *
+                                                        SizeConfig
+                                                            .heightMultiplier!),
+                                                textStyle: TextStyle(
+                                                    fontSize: 15 *
+                                                        SizeConfig
+                                                            .textMultiplier!,
+                                                    fontWeight: FontWeight.bold)),
+                                            onPressed: controls.onStepContinue,
+                                            child: Text(isLastStep ? "Pay" : "Proceed")),
                                       ),
                                     ),
-                                    height: 53 * SizeConfig.heightMultiplier!,
-                                    child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.transparent,
-                                            elevation: 0.0,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(7 *
-                                                        SizeConfig
-                                                            .widthMultiplier!)),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 16 *
-                                                    SizeConfig.heightMultiplier!),
-                                            textStyle: TextStyle(
-                                                fontSize: 15 *
-                                                    SizeConfig.textMultiplier!,
-                                                fontWeight: FontWeight.bold)),
-                                        onPressed: controls.onStepContinue,
-                                        child:
-                                            Text(isLastStep ? "Pay" : "Proceed")),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        },
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                  ),
-                ),
-          ],
-        )));
+              ],
+            )));
   }
 
   List<Step> getSteps() => [
@@ -263,7 +276,6 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                 SizedBox(
                   height: 15 * SizeConfig.heightMultiplier!,
                 ),
-
 
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -345,11 +357,11 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                                     color: const Color(0xff585858),
                                     fontSize:
                                         SizeConfig.textMultiplier! * 11.0))),
-                        child:DropdownSearch<String>(
+                        child: DropdownSearch<String>(
                           selectedItem:
-                          gender.text.isEmpty || gender.text == null
-                              ? gender.text
-                              : null,
+                              gender.text.isEmpty || gender.text == null
+                                  ? gender.text
+                                  : null,
                           popupProps: PopupProps.bottomSheet(
                               bottomSheetProps: const BottomSheetProps(
                                 backgroundColor: Color(0xffFFFFFF),
@@ -363,12 +375,12 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                                   color: const Color(0xff9A9A9A)),
                               constraints: BoxConstraints(
                                   maxHeight:
-                                  300 * SizeConfig.heightMultiplier!),
+                                      300 * SizeConfig.heightMultiplier!),
                               showSearchBox: true,
                               searchFieldProps: TextFieldProps(
                                   style: TextStyle(
                                       fontSize:
-                                      SizeConfig.textMultiplier! * 11.0,
+                                          SizeConfig.textMultiplier! * 11.0,
                                       color: const Color(0xff9A9A9A)),
                                   controller: gender,
                                   decoration: InputDecoration(
@@ -395,7 +407,7 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                          greenThemeColor.withOpacity(0.3),
+                                              greenThemeColor.withOpacity(0.3),
                                           width: 1.7),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(
@@ -403,7 +415,7 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                                     ),
                                     hintStyle: TextStyle(
                                         fontSize:
-                                        SizeConfig.textMultiplier! * 11.0,
+                                            SizeConfig.textMultiplier! * 11.0,
                                         color: const Color(0xff9A9A9A)),
                                     suffixIcon: Icon(
                                       CupertinoIcons.search,
@@ -424,7 +436,6 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                                   child: Center(
                                     child: SvgPicture.asset(
                                       "images/gender_ icon.svg",
-
                                     ),
                                   ),
                                 ),
@@ -454,9 +465,7 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                                 hintText: "$genderText",
                                 hintStyle: TextStyle(
                                     fontSize: SizeConfig.textMultiplier! * 12.0,
-                                    color:  const Color(0xff56646C)),
-
-
+                                    color: const Color(0xff56646C)),
                               )),
                           // showSelectedItem: true,
                           items: [("Male"), ('Female')],
@@ -800,9 +809,6 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                   height: 15 * SizeConfig.heightMultiplier!,
                 ),
 
-
-
-
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -974,7 +980,7 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                   height: 15 * SizeConfig.heightMultiplier!,
                 ),
                 Container(
-                  width: 298* SizeConfig.widthMultiplier!,
+                  width: 298 * SizeConfig.widthMultiplier!,
                   child: TextFormField(
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -998,11 +1004,11 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-
                             IconButton(
                               icon: const Icon(
                                 Icons.remove,
-                                color: Color(0xff2BD67B),                              ),
+                                color: Color(0xff2BD67B),
+                              ),
                               iconSize: 20 * SizeConfig.heightMultiplier!,
                               color: Theme.of(context).primaryColor,
                               onPressed: () {
@@ -1013,7 +1019,6 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                                 });
                               },
                             ),
-
                             Text(
                               '$counter',
                               textAlign: TextAlign.center,
@@ -1026,7 +1031,7 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                             IconButton(
                               icon: const Icon(
                                 Icons.add,
-                                color:  Color(0xff2BD67B),
+                                color: Color(0xff2BD67B),
                               ),
                               iconSize: 20 * SizeConfig.heightMultiplier!,
                               color: Theme.of(context).primaryColor,
@@ -1056,8 +1061,7 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: greenThemeColor.withOpacity(0.2),
-                            width: 1),
+                            color: greenThemeColor.withOpacity(0.2), width: 1),
                         borderRadius: BorderRadius.all(
                             Radius.circular(ScreenWidth * 0.0133333)),
                       ),
@@ -1080,8 +1084,6 @@ class _OpdBookingScreenState extends State<OpdBookingScreen> {
                 SizedBox(
                   height: 15 * SizeConfig.heightMultiplier!,
                 ),
-
-
               ],
             )),
         Step(

@@ -1,24 +1,21 @@
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-class LocalNotificationService{
-
+class LocalNotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
-  FlutterLocalNotificationsPlugin();
-
+      FlutterLocalNotificationsPlugin();
 
   static void initialize() {
     // initializationSettings  for Android
     const InitializationSettings initializationSettings =
-    InitializationSettings(
+        InitializationSettings(
       android: AndroidInitializationSettings("@mipmap/ic_launcher"),
     );
 
-
-
     _notificationsPlugin.initialize(
-      initializationSettings,onDidReceiveNotificationResponse:(NotificationResponse notificationResponse) async {
+      initializationSettings,
+      onDidReceiveNotificationResponse:
+          (NotificationResponse notificationResponse) async {
         print("onDidReceiveBackgroundNotificationResponse");
         if (notificationResponse.id != null) {
           print("Router Value1234 $notificationResponse");
@@ -31,15 +28,9 @@ class LocalNotificationService{
           //   ),
           // );
 
-
         }
       },
     );
-
-
-
-
-
   }
 
   static void createanddisplaynotification(RemoteMessage message) async {
@@ -65,6 +56,4 @@ class LocalNotificationService{
       print(e);
     }
   }
-
 }
-

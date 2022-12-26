@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:sameday/global_variables.dart';
 import 'package:sameday/screens/login_screens/loginscreen.dart';
 import 'package:sameday/size_config.dart';
-import 'dart:async';
 
 import '../../widgets/sameday_appbar.dart';
 import '../sameday_main_screen/sameday_main_screen.dart';
+
 class LoginMobilePage extends StatefulWidget {
   @override
   _LoginMobilePageState createState() => _LoginMobilePageState();
@@ -15,27 +17,23 @@ class LoginMobilePage extends StatefulWidget {
 class _LoginMobilePageState extends State<LoginMobilePage> {
   bool _userClickedLogInButton = false;
 
-
   late String phoneNo;
- late String smssent;
-  late String  verificationId;
+  late String smssent;
+  late String verificationId;
 
-  Future<void> verifyPhone() async{
-    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId){
+  Future<void> verifyPhone() async {
+    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId) {
       this.verificationId = verId;
     };
 
-   final PhoneCodeSent  smsCodeSent = (String verId,forceCodeResend){
-       this.verificationId = verId;
-       smsCodeDialoge(context).then((value){
-         print("Code Send");
+    final PhoneCodeSent smsCodeSent = (String verId, forceCodeResend) {
+      this.verificationId = verId;
+      smsCodeDialoge(context).then((value) {
+        print("Code Send");
+      });
+    };
 
-       });
-
-     };
-
-
-    final PhoneVerificationCompleted verifiedSuccess = (AuthCredential auth){};
+    final PhoneVerificationCompleted verifiedSuccess = (AuthCredential auth) {};
     final PhoneVerificationFailed verifyFailed = (FirebaseAuthException e) {
       print('${e.message}');
     };
@@ -48,7 +46,8 @@ class _LoginMobilePageState extends State<LoginMobilePage> {
       codeAutoRetrievalTimeout: autoRetrieve,
     );
   }
-  Future smsCodeDialoge(BuildContext context){
+
+  Future smsCodeDialoge(BuildContext context) {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -56,56 +55,56 @@ class _LoginMobilePageState extends State<LoginMobilePage> {
         return AlertDialog(
           title: Text('Provide OTP'),
           content: TextField(
-            onChanged: (value)  {
-              this.smssent  = value;
+            onChanged: (value) {
+              this.smssent = value;
             },
           ),
           contentPadding: EdgeInsets.all(10.0),
           actions: <Widget>[
-             ElevatedButton(
-                onPressed: () async{
+            ElevatedButton(
+                onPressed: () async {
+                  User? user = FirebaseAuth.instance.currentUser;
 
-                User? user =  FirebaseAuth.instance.currentUser;
-
-                    if(user != null){
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SameDayMainScreen()),
-                      );
-
-                    }
-                    else{
-                      Navigator.of(context).pop();
-                      signIn(smssent);
-                    }
-
+                  if (user != null) {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SameDayMainScreen()),
+                    );
+                  } else {
+                    Navigator.of(context).pop();
+                    signIn(smssent);
+                  }
                 },
-                child: Text('Done', style: TextStyle( color: Colors.blue),))
+                child: Text(
+                  'Done',
+                  style: TextStyle(color: Colors.blue),
+                ))
           ],
         );
       },
     );
   }
+
   Future<void> signIn(String smsCode) async {
     final AuthCredential credential = PhoneAuthProvider.credential(
       verificationId: verificationId,
       smsCode: smsCode,
     );
-    await FirebaseAuth.instance.signInWithCredential(credential)
-        .then((user){
+    await FirebaseAuth.instance.signInWithCredential(credential).then((user) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LogInScreen()),
       );
-    }).catchError((e){
+    }).catchError((e) {
       print(e);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return  Material(
+    return Material(
       child: Stack(
         children: [
           Container(
@@ -114,9 +113,9 @@ class _LoginMobilePageState extends State<LoginMobilePage> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      const Color(0xff7AD7F0).withOpacity(0.1),
-                      const Color(0xffDBF3FA).withOpacity(0.1)
-                    ])),
+                  const Color(0xff7AD7F0).withOpacity(0.1),
+                  const Color(0xffDBF3FA).withOpacity(0.1)
+                ])),
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
@@ -124,22 +123,25 @@ class _LoginMobilePageState extends State<LoginMobilePage> {
               parentContext: context,
             ),
             body: Padding(
-              padding:  EdgeInsets.only(left: 20 * SizeConfig.widthMultiplier!),
+              padding: EdgeInsets.only(left: 20 * SizeConfig.widthMultiplier!),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 25 * SizeConfig.heightMultiplier!,),
-                    Text('OTP Verification',
+                  SizedBox(
+                    height: 25 * SizeConfig.heightMultiplier!,
+                  ),
+                  Text(
+                    'OTP Verification',
                     style: TextStyle(
-                      color: Color(0xff1E232C),
-                      fontWeight: FontWeight.w700,
-                      fontSize: 30 * SizeConfig.textMultiplier!
-                    ),
-                    ),
+                        color: Color(0xff1E232C),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 30 * SizeConfig.textMultiplier!),
+                  ),
 
-                  SizedBox(height: 25 * SizeConfig.heightMultiplier!,),
-
+                  SizedBox(
+                    height: 25 * SizeConfig.heightMultiplier!,
+                  ),
 
                   Container(
                     margin: EdgeInsets.only(
@@ -154,36 +156,40 @@ class _LoginMobilePageState extends State<LoginMobilePage> {
                           color: Color(0xff8391A1),
                           fontSize: 15 * SizeConfig.textMultiplier!,
                           fontWeight: FontWeight.w500,
-
                         ),
-                        contentPadding: EdgeInsets.only(top: 15 * SizeConfig.heightMultiplier! ,bottom: 15 * SizeConfig.heightMultiplier!),
+                        contentPadding: EdgeInsets.only(
+                            top: 15 * SizeConfig.heightMultiplier!,
+                            bottom: 15 * SizeConfig.heightMultiplier!),
                         enabled: true,
                         focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xffDADADA)),
-                          borderRadius: BorderRadius.circular(8 * SizeConfig.widthMultiplier!),
+                          borderSide:
+                              const BorderSide(color: Color(0xffDADADA)),
+                          borderRadius: BorderRadius.circular(
+                              8 * SizeConfig.widthMultiplier!),
                         ),
                         enabledBorder: UnderlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xffDADADA)),
-                          borderRadius: BorderRadius.circular(8 * SizeConfig.widthMultiplier!),
+                          borderSide:
+                              const BorderSide(color: Color(0xffDADADA)),
+                          borderRadius: BorderRadius.circular(
+                              8 * SizeConfig.widthMultiplier!),
                         ),
                       ),
-                      onChanged: (value){
+                      onChanged: (value) {
                         phoneNo = value;
                       },
                       keyboardType: TextInputType.phone,
                     ),
                   ),
-                  SizedBox(height: 25 * SizeConfig.heightMultiplier!,),
+                  SizedBox(
+                    height: 25 * SizeConfig.heightMultiplier!,
+                  ),
                   Container(
                       margin: EdgeInsets.only(
                           right: 22 * SizeConfig.widthMultiplier!),
                       child: Container(
-
                         width: ScreenWidth,
-
                         height: ScreenHeight * 0.0678,
                         decoration: BoxDecoration(
-
                           boxShadow: [
                             BoxShadow(
                                 color: const Color(0xffFF7800).withOpacity(0.3),
@@ -200,8 +206,6 @@ class _LoginMobilePageState extends State<LoginMobilePage> {
                               Color(0xffFFAB61),
                             ],
                           ),
-
-
                           borderRadius: BorderRadius.all(
                               Radius.circular(8 * SizeConfig.widthMultiplier!)),
                           color: _userClickedLogInButton
@@ -212,32 +216,32 @@ class _LoginMobilePageState extends State<LoginMobilePage> {
                           children: [
                             Center(
                                 child:
-                                // !_userClickedLogInButton
-                                //     ?
-                                _userClickedLogInButton
-                                    ? Image.asset(
-                                  'images/loader_with_animation.gif',
-                                  width:
-                                  80 * SizeConfig.widthMultiplier!,
-                                )
-                                    : Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
-                                      width: ScreenWidth * 0.01,
-                                    ),
-                                    Text(
-                                      "Verify",
-                                      style: TextStyle(
-                                          color:
-                                          const Color(0xffEDFCFE),
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: SizeConfig
-                                              .textMultiplier! *
-                                              14.0),
-                                    )
-                                  ],
-                                )),
+                                    // !_userClickedLogInButton
+                                    //     ?
+                                    _userClickedLogInButton
+                                        ? Image.asset(
+                                            'images/loader_with_animation.gif',
+                                            width: 80 *
+                                                SizeConfig.widthMultiplier!,
+                                          )
+                                        : Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SizedBox(
+                                                width: ScreenWidth * 0.01,
+                                              ),
+                                              Text(
+                                                "Verify",
+                                                style: TextStyle(
+                                                    color:
+                                                        const Color(0xffEDFCFE),
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: SizeConfig
+                                                            .textMultiplier! *
+                                                        14.0),
+                                              )
+                                            ],
+                                          )),
                             Positioned.fill(
                               child: Material(
                                 color: Colors.transparent,
@@ -254,7 +258,6 @@ class _LoginMobilePageState extends State<LoginMobilePage> {
                         ),
                       )),
 
-
                   //
                   // SizedBox(height: 10.0),
                   // ElevatedButton(
@@ -267,18 +270,5 @@ class _LoginMobilePageState extends State<LoginMobilePage> {
         ],
       ),
     );
-
-
-
-
-
-
-
-
-
-
-
-
-
   }
 }

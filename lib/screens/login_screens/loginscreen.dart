@@ -6,18 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:sameday/api_handlers/user_login_api.dart';
 import 'package:sameday/global_variables.dart';
-import 'package:sameday/screens/login_screens/mobilelogin.dart';
-import 'package:sameday/screens/session_expired_screen/noconnection.dart';
 import 'package:sameday/widgets/polygon_image.dart';
 
 import '../../size_config.dart';
 import '../sameday_main_screen/sameday_main_screen.dart';
-import '../sameday_main_screen/secondhome_screen.dart';
 import '../signup_screens/forgetpass.dart';
 import '../signup_screens/signup_screens.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({Key? key}) : super(key: key);
@@ -27,114 +23,28 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
-  late String phoneNo;
-  late String smssent;
-  late String  verificationId;
-
-  Future<void> verifyPhone() async{
-    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId){
-      this.verificationId = verId;
-    };
-
-    final PhoneCodeSent  smsCodeSent = (String verId,forceCodeResend){
-      this.verificationId = verId;
-      smsCodeDialoge(context).then((value){
-        print("Code Send");
-
-      });
-
-    };
-
-
-    final PhoneVerificationCompleted verifiedSuccess = (AuthCredential auth){};
-    final PhoneVerificationFailed verifyFailed = (FirebaseAuthException e) {
-      print('${e.message}');
-    };
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: phoneNo,
-      timeout: const Duration(seconds: 5),
-      verificationCompleted: verifiedSuccess,
-      verificationFailed: verifyFailed,
-      codeSent: smsCodeSent,
-      codeAutoRetrievalTimeout: autoRetrieve,
-    );
-  }
-  Future smsCodeDialoge(BuildContext context){
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Provide OTP'),
-          content: TextField(
-            onChanged: (value)  {
-              this.smssent  = value;
-            },
-          ),
-          contentPadding: EdgeInsets.all(10.0),
-          actions: <Widget>[
-            ElevatedButton(
-                onPressed: () async{
-
-                  User? user =  FirebaseAuth.instance.currentUser;
-
-                  if(user != null){
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SameDayMainScreen()),
-                    );
-
-                  }
-                  else{
-                    Navigator.of(context).pop();
-                    signIn(smssent);
-                  }
-
-                },
-                child: Text('Done', style: TextStyle( color: Colors.blue),))
-          ],
-        );
-      },
-    );
-  }
-  Future<void> signIn(String smsCode) async {
-    final AuthCredential credential = PhoneAuthProvider.credential(
-      verificationId: verificationId,
-      smsCode: smsCode,
-    );
-    await FirebaseAuth.instance.signInWithCredential(credential)
-        .then((user){
-      Navigator.of(context).pushReplacementNamed('/loginpage');
-    }).catchError((e){
-      print(e);
-    });
-  }
-
-
   String errorMessage = "";
   String otp = "";
-  String otpMessage = "Otp is send to your email.";
   bool rememberDevice = false;
   bool _isSecure = true;
 
-  TextEditingController Username = TextEditingController();
+  TextEditingController UserName = TextEditingController();
   TextEditingController Password = TextEditingController();
   GlobalKey<FormState> usernameKey = GlobalKey<FormState>();
   bool _userClickedLogInButton = false;
   final FocusNode _emailFocusNode = FocusNode();
-  final TextEditingController _whiteListOtpController = TextEditingController();
   RxBool isOtpIncorrect = false.obs;
-  GlobalKey<ScaffoldState> _whiteListKey = GlobalKey<ScaffoldState>();
 
-  final _auth = FirebaseAuth.instance;
+  bool isEmail(String input) => EmailValidator.validate(input);
 
+  bool isPhone(String input) =>
+      RegExp(r'^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$')
+          .hasMatch(input);
 
   @override
   void dispose() {
-    Username.dispose();
+    UserName.dispose();
     Password.dispose();
-    _whiteListOtpController.dispose();
     super.dispose();
   }
 
@@ -151,8 +61,7 @@ class _LogInScreenState extends State<LogInScreen> {
         body: Stack(
           children: [
             Transform(
-              transform: Matrix4.identity()
-                ..rotateZ(0 * 3.1415927 / 180),
+              transform: Matrix4.identity()..rotateZ(0 * 3.1415927 / 180),
               child: Container(
                   height: ScreenWidth * 0.378,
                   width: ScreenWidth * 0.378,
@@ -184,10 +93,10 @@ class _LogInScreenState extends State<LogInScreen> {
                         margin: EdgeInsets.only(
                             left: 30 * SizeConfig.widthMultiplier!,
                             right: 30 * SizeConfig.widthMultiplier!),
-
                         child: Focus(
                           onFocusChange: (hasFocus) {
-                            if (hasFocus) {} else {
+                            if (hasFocus) {
+                            } else {
                               usernameKey.currentState!.validate();
                             }
                           },
@@ -206,12 +115,13 @@ class _LogInScreenState extends State<LogInScreen> {
                                   usernameKey.currentState?.validate();
                                 },
                                 textInputAction: TextInputAction.next,
-                                keyboardType: TextInputType.emailAddress,
-                                validator: (String? value) =>
-                                EmailValidator.validate(value!)
-                                    ? null
-                                    : "Please enter a valid email",
-                                controller: Username,
+                                validator: (value) {
+                                  if (!isEmail(value!) && !isPhone(value)) {
+                                    return 'Please enter a valid email or phone number.';
+                                  }
+                                  return null;
+                                },
+                                controller: UserName,
                                 cursorRadius: const Radius.circular(10.0),
                                 cursorColor: greenThemeColor,
                                 style: TextStyle(
@@ -223,22 +133,22 @@ class _LogInScreenState extends State<LogInScreen> {
                                   errorStyle: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      SizeConfig.textMultiplier! * 11),
+                                          SizeConfig.textMultiplier! * 11),
                                   prefixIcon: SizedBox(
                                     width: ScreenWidth * 0.05,
                                     child: Center(
                                         child: Transform.scale(
-                                          scale: 0.8,
-                                          child: SvgPicture.asset(
-                                            "images/user_icon.svg",
-                                            width: ScreenWidth * 0.04,
-                                          ),
-                                        )),
+                                      scale: 0.8,
+                                      child: SvgPicture.asset(
+                                        "images/user_icon.svg",
+                                        width: ScreenWidth * 0.04,
+                                      ),
+                                    )),
                                   ),
                                   contentPadding: EdgeInsets.symmetric(
                                     vertical: 18 * SizeConfig.heightMultiplier!,
                                   ),
-                                  hintText: "Email",
+                                  hintText: "Enter your phone number or email",
                                   hintStyle: TextStyle(
                                       fontSize: 14 * SizeConfig.textMultiplier!,
                                       color: const Color(0xff8391A1)),
@@ -260,7 +170,6 @@ class _LogInScreenState extends State<LogInScreen> {
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
                                         color: Color(0xffDADADA), width: 1),
-
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(
                                             8 * SizeConfig.widthMultiplier!)),
@@ -306,25 +215,24 @@ class _LogInScreenState extends State<LogInScreen> {
                             },
                             child: (_isSecure)
                                 ? Icon(
-                              Icons.visibility_off,
-                              color: const Color(0xffBDBDBD),
-                              size: ScreenWidth * 0.05,
-                            )
+                                    Icons.visibility_off,
+                                    color: const Color(0xffBDBDBD),
+                                    size: ScreenWidth * 0.05,
+                                  )
                                 : Icon(
-                              Icons.visibility,
-                              color: greenThemeColor,
-                              size: ScreenWidth * 0.05,
-                            ),
+                                    Icons.visibility,
+                                    color: greenThemeColor,
+                                    size: ScreenWidth * 0.05,
+                                  ),
                           ),
                           prefixIcon: SizedBox(
                             width: ScreenWidth * 0.009,
                             child: Center(
                                 child: Transform.scale(
-                                  scale: 0.8,
-                                  child: SvgPicture.asset(
-                                      "images/lock_icon.svg",
-                                      width: ScreenWidth * 0.04),
-                                )),
+                              scale: 0.8,
+                              child: SvgPicture.asset("images/lock_icon.svg",
+                                  width: ScreenWidth * 0.04),
+                            )),
                           ),
                           contentPadding: EdgeInsets.symmetric(
                             vertical: 18 * SizeConfig.heightMultiplier!,
@@ -338,16 +246,14 @@ class _LogInScreenState extends State<LogInScreen> {
                             borderSide: BorderSide(
                                 color: greenThemeColor.withOpacity(0.2),
                                 width: 1),
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(
-                                    6 * SizeConfig.widthMultiplier!)),
+                            borderRadius: BorderRadius.all(Radius.circular(
+                                6 * SizeConfig.widthMultiplier!)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
                                 color: Color(0xffDADADA), width: 1),
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(
-                                    8 * SizeConfig.widthMultiplier!)),
+                            borderRadius: BorderRadius.all(Radius.circular(
+                                8 * SizeConfig.widthMultiplier!)),
                           ),
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(
@@ -364,12 +270,12 @@ class _LogInScreenState extends State<LogInScreen> {
                 //if username and password not found in database
                 (errorMessage.isNotEmpty)
                     ? Container(
-                  padding: EdgeInsets.only(top: ScreenHeight * 0.006),
-                  child: Text("The user name or password is incorrect.",
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontSize: SizeConfig.textMultiplier! * 10)),
-                )
+                        padding: EdgeInsets.only(top: ScreenHeight * 0.006),
+                        child: Text("$errorMessage",
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: SizeConfig.textMultiplier! * 10)),
+                      )
                     : Container(),
 
                 //todo add forgot password feaure
@@ -380,8 +286,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  Forgotpass()));
+                              builder: (context) => Forgotpass()));
                     },
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(ScreenWidth * 0.1,
@@ -409,7 +314,6 @@ class _LogInScreenState extends State<LogInScreen> {
                       width: ScreenWidth,
                       height: ScreenHeight * 0.0678,
                       decoration: BoxDecoration(
-
                         boxShadow: [
                           BoxShadow(
                               color: const Color(0xffFF7800).withOpacity(0.3),
@@ -426,8 +330,6 @@ class _LogInScreenState extends State<LogInScreen> {
                             Color(0xffFFAB61),
                           ],
                         ),
-
-
                         borderRadius: BorderRadius.all(
                             Radius.circular(8 * SizeConfig.widthMultiplier!)),
                         color: _userClickedLogInButton
@@ -438,41 +340,41 @@ class _LogInScreenState extends State<LogInScreen> {
                         children: [
                           Center(
                               child:
-                              // !_userClickedLogInButton
-                              //     ?
-                              _userClickedLogInButton
-                                  ? Image.asset(
-                                'images/loader_with_animation.gif',
-                                width:
-                                80 * SizeConfig.widthMultiplier!,
-                              )
-                                  : Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    width: ScreenWidth * 0.05,
-                                    child: Center(
-                                        child: SvgPicture.asset(
-                                          "images/lock_icon.svg",
-                                          width: ScreenWidth * 0.035,
-                                          color: const Color(0xffEDFCFE),
+                                  // !_userClickedLogInButton
+                                  //     ?
+                                  _userClickedLogInButton
+                                      ? Image.asset(
+                                          'images/loader_with_animation.gif',
+                                          width:
+                                              80 * SizeConfig.widthMultiplier!,
+                                        )
+                                      : Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            SizedBox(
+                                              width: ScreenWidth * 0.05,
+                                              child: Center(
+                                                  child: SvgPicture.asset(
+                                                "images/lock_icon.svg",
+                                                width: ScreenWidth * 0.035,
+                                                color: const Color(0xffEDFCFE),
+                                              )),
+                                            ),
+                                            SizedBox(
+                                              width: ScreenWidth * 0.01,
+                                            ),
+                                            Text(
+                                              "Login",
+                                              style: TextStyle(
+                                                  color:
+                                                      const Color(0xffEDFCFE),
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: SizeConfig
+                                                          .textMultiplier! *
+                                                      14.0),
+                                            )
+                                          ],
                                         )),
-                                  ),
-                                  SizedBox(
-                                    width: ScreenWidth * 0.01,
-                                  ),
-                                  Text(
-                                    "Login",
-                                    style: TextStyle(
-                                        color:
-                                        const Color(0xffEDFCFE),
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: SizeConfig
-                                            .textMultiplier! *
-                                            14.0),
-                                  )
-                                ],
-                              )),
                           Positioned.fill(
                             child: Material(
                               color: Colors.transparent,
@@ -486,7 +388,9 @@ class _LogInScreenState extends State<LogInScreen> {
                                       _userClickedLogInButton = true;
                                     });
 
-                                    signInn(Username.text, Password.text);
+                                    LoginClick(UserName.text, Password.text);
+
+                                    // signInn(Username.text, Password.text);
                                     FocusManager.instance.primaryFocus
                                         ?.unfocus();
                                   }
@@ -555,91 +459,6 @@ class _LogInScreenState extends State<LogInScreen> {
                 SizedBox(
                   height: ScreenHeight * 0.02,
                 ),
-                Container(
-                    margin: EdgeInsets.only(
-                        left: 30 * SizeConfig.widthMultiplier!,
-                        right: 30 * SizeConfig.widthMultiplier!),
-                    child: Container(
-                      width: ScreenWidth,
-                      height: ScreenHeight * 0.0678,
-                      decoration: BoxDecoration(
-
-                        boxShadow: [
-                          BoxShadow(
-                              color: const Color(0xff0398FF).withOpacity(0.2),
-                              offset: const Offset(0, 10),
-                              blurRadius: 10 * SizeConfig.widthMultiplier!,
-                              spreadRadius: 0)
-                        ],
-                        gradient:  LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          stops: [0.0, 1.0],
-                          colors: [
-                            Color(0xff0398FF),
-                            Color(0xff0398FF).withOpacity(0.5),
-                          ],
-                        ),
-
-
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(8 * SizeConfig.widthMultiplier!)),
-                        color: _userClickedLogInButton
-                            ? greenThemeColor
-                            : Color(0xffFF7800),
-                      ),
-                      child: Stack(
-                        children: [
-                          Center(
-                              child:
-                              // !_userClickedLogInButton
-                              //     ?
-                              _userClickedLogInButton
-                                  ? Image.asset(
-                                'images/loader_with_animation.gif',
-                                width:
-                                80 * SizeConfig.widthMultiplier!,
-                              )
-                                  : Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    width: ScreenWidth * 0.01,
-                                  ),
-                                  Text(
-                                    "Login with Mobile No",
-                                    style: TextStyle(
-                                        color:
-                                        const Color(0xffEDFCFE),
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: SizeConfig
-                                            .textMultiplier! *
-                                            14.0),
-                                  )
-                                ],
-                              )),
-                          Positioned.fill(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(
-                                    ScreenWidth * 0.01333),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => LoginMobilePage(),
-                                    ),
-                                  );
-
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
-
 
                 SizedBox(
                   height: ScreenHeight * 0.10,
@@ -676,57 +495,48 @@ class _LogInScreenState extends State<LogInScreen> {
         ));
   }
 
+  Future<void> LoginClick(String userName, String password) async {
+    //login Api object
+    logInAPI checkUserCredentials = logInAPI();
 
-  signInn(String email, String password) async {
-    if (usernameKey.currentState!.validate()) {
-      try {
-        UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
+    //response code from Api changed in future
+    int? responseFromApi;
 
-        if (userCredential != null) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SameDayMainScreen(),
-            ),
-          );
-        }
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found') {
-          setState(() {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(
-              content: const Text(
-                  "No user found for that email."),
-              backgroundColor:
-              Colors.redAccent.withOpacity(0.6),
-              elevation: 0.0,
-            )
-            );
-            _userClickedLogInButton = false;
-          });
-        } else if (e.code == 'wrong-password') {
-          setState(() {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(
-              content: const Text(
-                  "Wrong password provided for that user."),
-              backgroundColor:
-              Colors.redAccent.withOpacity(0.6),
-              elevation: 0.0,
-            )
-            );
-            _userClickedLogInButton = false;
-          });
-        }
-      }
-      catch (e) {
-        print(e);
-      }
+    //calling API and storing response
+    responseFromApi = await checkUserCredentials.checkUserCredentials(
+      userName: userName,
+      password: password,
+    );
+
+    //if username or password is incorrect
+    if (responseFromApi == 400) {
+      setState(() {
+        errorMessage = "password is incorrect";
+        _userClickedLogInButton = false;
+      });
     }
-  }
+    if (responseFromApi == 404) {
+      setState(() {
+        errorMessage = "User Not Available";
+        _userClickedLogInButton = false;
+      });
+    }
 
+    //User logged in SuccessFully
+    if (responseFromApi == 201) {
+      setState(() {
+        _userClickedLogInButton = false;
+      });
+
+      //save password for later use
+
+      //starting home Screen
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const SameDayMainScreen()));
+      TextInput.finishAutofillContext();
+    }
+    setState(() {
+      _userClickedLogInButton = false;
+    });
+  }
 }

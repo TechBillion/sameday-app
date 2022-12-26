@@ -5,11 +5,11 @@ import 'package:sameday/size_config.dart';
 class CustomStepIndicator extends StatelessWidget {
   const CustomStepIndicator(
       {Key? key,
-        required this.length,
-        required this.currentStep,
-        required this.lineWidth,
-        required this.stepNameList,
-        this.textWidth})
+      required this.length,
+      required this.currentStep,
+      required this.lineWidth,
+      required this.stepNameList,
+      this.textWidth})
       : super(key: key);
   final int length;
   final int currentStep;
@@ -40,16 +40,16 @@ class CustomStepIndicator extends StatelessWidget {
                           color: (index < currentStep)
                               ? const Color(0xffFF7800)
                               : (index == currentStep)
-                              ? const Color(0xffFF7800)
-                              : const Color(0xffD2E5F2),
+                                  ? const Color(0xffFF7800)
+                                  : const Color(0xffD2E5F2),
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
                                 color: (index < currentStep)
                                     ? const Color(0xffFF7800)
                                     : (index == currentStep)
-                                    ? const Color(0xffFF7800)
-                                    : grayTextColor.withOpacity(0.0),
+                                        ? const Color(0xffFF7800)
+                                        : grayTextColor.withOpacity(0.0),
                                 blurRadius: 3,
                                 offset: const Offset(0, 2))
                           ]),
@@ -61,13 +61,10 @@ class CustomStepIndicator extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Color(0xffFFFFFF),
                               shape: BoxShape.circle,
-
                             ),
-
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-
                                 Container(
                                   height: 23 * SizeConfig.heightMultiplier!,
                                   width: 23 * SizeConfig.widthMultiplier!,
@@ -75,16 +72,18 @@ class CustomStepIndicator extends StatelessWidget {
                                       color: (index < currentStep)
                                           ? const Color(0xffFF7800)
                                           : (index == currentStep)
-                                          ? const Color(0xffFF7800)
-                                          : const Color(0xff0398FF).withOpacity(0.2),
+                                              ? const Color(0xffFF7800)
+                                              : const Color(0xff0398FF)
+                                                  .withOpacity(0.2),
                                       shape: BoxShape.circle,
                                       boxShadow: [
                                         BoxShadow(
                                             color: (index < currentStep)
                                                 ? const Color(0xffFF7800)
                                                 : (index == currentStep)
-                                                ? const Color(0xffFF7800)
-                                                : grayTextColor.withOpacity(0.0),
+                                                    ? const Color(0xffFF7800)
+                                                    : grayTextColor
+                                                        .withOpacity(0.0),
                                             blurRadius: 3,
                                             offset: const Offset(0, 2))
                                       ]),
@@ -96,7 +95,8 @@ class CustomStepIndicator extends StatelessWidget {
                                               ? Color(0xff0398FF)
                                               : Colors.white,
                                           fontWeight: FontWeight.w700,
-                                          fontSize: 11 * SizeConfig.textMultiplier!),
+                                          fontSize:
+                                              11 * SizeConfig.textMultiplier!),
                                     ),
                                   ),
                                 ),
@@ -128,7 +128,7 @@ class CustomStepIndicator extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(
               length,
-                  (index) => SizedBox(
+              (index) => SizedBox(
                   width: textWidth ?? ScreenWidth * 0.15,
                   child: Text(
                     stepNameList[index],

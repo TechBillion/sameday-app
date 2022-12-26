@@ -1,10 +1,7 @@
-
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-
-import 'package:sameday/global_variables.dart';
 
 class signUpAPI {
   String phoneNumber;
@@ -12,41 +9,26 @@ class signUpAPI {
   String password;
   String confirmPassword;
 
+  signUpAPI({
+    required this.phoneNumber,
+    required this.email,
+    required this.password,
+    required this.confirmPassword,
+  });
 
-
-  signUpAPI(
-      {
-        required this.phoneNumber,
-        required this.email,
-        required this.password,
-        required this.confirmPassword,
-
-      });
-
- Future<int>accountSignUp() async {
-    final response = await http.post(Uri.parse("http://apis.samedaylko.com/api/Auth/register"),
-        body:jsonEncode ({
-          "phoneNumber":phoneNumber,
-          "email": email,
-          "password": password,
-          "confirmPassword": confirmPassword,
-
-        }),
-    headers:  {
-
-      HttpHeaders.contentTypeHeader : 'application/json',
-
-
-   },
-
-
+  Future<int> accountSignUp() async {
+    final response = await http.post(
+      Uri.parse("http://apis.samedaylko.com/api/Auth/register"),
+      body: jsonEncode({
+        "phoneNumber": phoneNumber,
+        "email": email,
+        "password": password,
+        "confirmPassword": confirmPassword,
+      }),
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
     );
-
-
-
-
-
-
 
     if (response.statusCode == 200) {
       //if account created successfully then return 1
@@ -59,9 +41,4 @@ class signUpAPI {
       return 2;
     }
   }
-
-
 }
-
-
-

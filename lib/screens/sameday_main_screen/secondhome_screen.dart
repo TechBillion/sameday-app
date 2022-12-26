@@ -39,8 +39,7 @@ class _SecondHomeScreenState extends State<SecondHomeScreen> {
                     colors: [
                   const Color(0xff7AD7F0).withOpacity(0.1),
                   const Color(0xffDBF3FA).withOpacity(0.1)
-                ])
-            ),
+                ])),
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
@@ -338,9 +337,10 @@ class _SecondHomeScreenState extends State<SecondHomeScreen> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Padding(
-                    padding:  EdgeInsets.only(left: 24 * SizeConfig.widthMultiplier!),
+                    padding:
+                        EdgeInsets.only(left: 24 * SizeConfig.widthMultiplier!),
                     child: Row(
-                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _offerTab(
                           imagePath: 'images/girl_icon.png',
@@ -359,7 +359,6 @@ class _SecondHomeScreenState extends State<SecondHomeScreen> {
                     ),
                   ),
                 )
-                
               ],
             ),
           ),
@@ -535,7 +534,6 @@ class _offerTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(10 * SizeConfig.widthMultiplier!),
-   
       decoration: BoxDecoration(
         gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -548,7 +546,6 @@ class _offerTab extends StatelessWidget {
       child: Row(
         children: [
           Container(
-
             child: Column(
               children: [
                 Padding(
@@ -583,8 +580,6 @@ class _offerTab extends StatelessWidget {
                               color: Color(0xffFFFFFF),
                             ),
                           ),
-
-
                           Row(
                             children: [
                               Column(
@@ -625,15 +620,16 @@ class _offerTab extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(width: 8 * SizeConfig.widthMultiplier!,),
+          SizedBox(
+            width: 8 * SizeConfig.widthMultiplier!,
+          ),
           Transform.scale(
             scale: 1.3,
-            child: Image.asset(imagePath,
-            width: 50,
-
+            child: Image.asset(
+              imagePath,
+              width: 50,
             ),
           )
-
         ],
       ),
     );
